@@ -1,3 +1,8 @@
+---
+name: memory-compression
+description: Production memory management. Prevents context loss, enables compound memory across sessions. Use when MEMORY.md exceeds 200 lines or before archiving.
+---
+
 # Skill: Memory Compression & Management
 
 Production memory management for Energy agents. Prevents context loss, enables compound memory.
