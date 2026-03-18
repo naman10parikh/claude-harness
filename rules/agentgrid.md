@@ -1,0 +1,10 @@
+- AgentGrid CLI (`agentgrid`) is the PRIMARY tool for all grid operations. Raw tmux commands are the FALLBACK only.
+- Use `agentgrid spawn NxM claude` to create grids, not manual `tmux split-window`
+- Use `agentgrid status` to check health, not manual `tmux list-panes`
+- Use `agentgrid name %ID "VP-Name"` to label panes
+- Use `agentgrid save/load` to persist grid configurations
+- Use `agentgrid broadcast` to send prompts to all panes
+- YAML manifest templates in `.claude/ceo-bootstrap/manifest-templates/` define company structures
+- Only use raw tmux when agentgrid doesn't cover the operation (e.g., `tmux capture-pane` for reading output, `tmux set-option` for custom attributes)
+- The inject-task.sh script uses tmux load-buffer/paste-buffer — this is an allowed raw tmux use (agentgrid doesn't have an inject equivalent)
+- AgentGrid config: `~/.agentgrid/config.json`. Presets: `~/.agentgrid/presets/`. Sessions: `~/.agentgrid/sessions/`.
