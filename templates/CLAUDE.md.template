@@ -1,0 +1,49 @@
+# [PROJECT_NAME]
+
+## What We're Building
+
+[FILL_IN: One paragraph describing your project]
+
+## Tech Stack
+
+[FILL_IN: e.g., TypeScript, Next.js 15, Tailwind, shadcn/ui, Vitest]
+
+## Code Style
+
+- No `any`. Named exports only. `const` over `let`.
+- Files under 400 lines. Break into modules when exceeded.
+- [FILL_IN: Add project-specific style rules]
+
+## How Claude Should Operate
+
+1. **Act, don't ask.** If you can do it, do it. Only escalate for API keys or business decisions.
+2. **Never give up.** When a tool fails, try a different approach. There is always a solution.
+3. **Self-improve.** After each session, check for patterns. Update LEARNINGS.md.
+4. **One thing at a time.** Complete one feature fully before starting the next.
+5. **Test as a user.** "It compiles" means nothing. Click through flows. Fix what's broken.
+
+## Skills ([SKILL_COUNT] available)
+
+[FILL_IN: List your installed skills, e.g.]
+`/deep-think` `/architect` `/sprint` `/troubleshoot` `/self-improve` `/validate` `/recover` `/handoff`
+
+## Session Protocol
+
+1. **Start:** Read this file. Check memory/daily/ for context.
+2. **During:** Use task tracking for multi-step work. Sub-agents for research.
+3. **End:** Update memory, write daily log, commit stable work.
+
+## Context Health
+
+- Each compaction retains only 20-30% of detail
+- After 2 compactions: write handoff, start new session
+- Use sub-agents for research to protect context window
+
+## Error Protocol
+
+Never retry same approach 3x. Check: LEARNINGS.md -> docs -> web search.
+After every fix: What broke? Root cause? Rule to prevent recurrence? -> append to LEARNINGS.md.
+
+## Commands
+
+[FILL_IN: Add project-specific commands]

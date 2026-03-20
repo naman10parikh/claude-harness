@@ -1,0 +1,64 @@
+{
+  "name": "claude-harness",
+  "version": "1.0.0",
+  "description": "Battle-tested Claude Code scaffold. Same model, 2x output.",
+  "type": "module",
+  "bin": {
+    "claude-harness": "bin/claude-harness.js"
+  },
+  "files": [
+    "bin",
+    "templates",
+    "skills",
+    "hooks",
+    "rules",
+    "scripts",
+    "examples",
+    "docs",
+    "LICENSE",
+    "README.md",
+    "CONTRIBUTING.md",
+    "CODE_OF_CONDUCT.md",
+    "SECURITY.md"
+  ],
+  "scripts": {
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "self-test": "node bin/claude-harness.js --help"
+  },
+  "keywords": [
+    "claude",
+    "claude-code",
+    "harness",
+    "scaffold",
+    "ai",
+    "agent",
+    "developer-tools",
+    "productivity",
+    "context-management",
+    "memory",
+    "hooks",
+    "skills",
+    "self-improving"
+  ],
+  "dependencies": {
+    "@inquirer/prompts": "^8.3.2",
+    "commander": "^14.0.3"
+  },
+  "devDependencies": {
+    "vitest": "^3.2.4"
+  },
+  "author": "Naman Parikh <naman10parikh@gmail.com>",
+  "license": "MIT",
+  "homepage": "https://github.com/naman10parikh/claude-harness#readme",
+  "bugs": {
+    "url": "https://github.com/naman10parikh/claude-harness/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/naman10parikh/claude-harness.git"
+  },
+  "engines": {
+    "node": ">=18"
+  }
+}
