@@ -1,86 +1,57 @@
-# AGENTS.md — Wiki Schema & Conventions
+# AGENTS.md — claude-harness orchestration conventions
 
-> This file tells the LLM how your wiki is structured.
-> You and the LLM co-evolve this over time.
+Conventions for any agent (Claude Code, sub-agents, CI bots) working **on this repo**. This is
+not user-facing product documentation — for that see `README.md` and `docs/`.
 
-## Domain: personal
+## Repo layout — what an agent needs to know
 
-## Created: 2026-04-07
+This repo has two distinct surfaces. **Never edit one when you mean the other.**
 
-## Directory Structure
+### Product payload (shipped to users — listed in `package.json` `files`)
 
-```
-raw/              # Immutable source documents (never modified by LLM)
-wiki/             # LLM-generated markdown (the knowledge base)
-  index.md        # Content catalog — every page listed with summary
-  log.md          # Chronological record of operations
-  sources/        # One summary page per ingested source
-  entities/       # Pages for people, organizations, tools, etc.
-  concepts/       # Pages for ideas, frameworks, patterns, etc.
-  syntheses/      # Cross-cutting analyses, comparisons, explorations
-AGENTS.md         # This file — wiki schema and conventions
-config.yaml       # Configuration (LLM provider, sources, schedules)
-```
+| Dir          | Role                                                                   |
+| ------------ | ---------------------------------------------------------------------- |
+| `bin/`       | CLI entry: `claude-harness.js` (commands), `install.js`, `init.sh`     |
+| `templates/` | CLAUDE.md template, `settings.local.json`, mission/checkpoint, memory  |
+| `skills/`    | Catalog of slash-command skills the scaffolder installs                |
+| `rules/`     | Context-aware rule files the scaffolder installs                       |
+| `hooks/`     | Lifecycle shell scripts the scaffolder installs                        |
+| `agents/`    | Sub-agent definitions the scaffolder installs                          |
+| `examples/`  | Sample CLAUDE.md per project type (web-app, cli-tool, agent-project)   |
+| `scripts/`   | Helper scripts (`verify.sh`, `auto-switch.sh`) the scaffolder installs |
+| `docs/`      | End-user documentation for the scaffolded harness                      |
 
-## Page Conventions
+### This repo's own harness (how agents operate while developing here)
 
-Every wiki page has YAML frontmatter:
+| Dir         | Role                                                                  |
+| ----------- | --------------------------------------------------------------------- |
+| `.claude/`  | This repo's own skills/rules/hooks/agents/commands + local settings   |
+| `brain/`    | Company-brain knowledge graph (Obsidian vault): MOC + ORG notes       |
+| `identity/` | Agent-format identity: SOUL, BRAND, HEARTBEAT, MEMORY                 |
+| `memory/`   | Long-term memory: MEMORY.md, LEARNINGS.md, daily/, topics/, archive/  |
 
-```yaml
----
-title: "Page Title"
-type: source | entity | concept | synthesis | index | log
-created: "YYYY-MM-DD"
-updated: "YYYY-MM-DD"
-tags: [tag1, tag2]
-sources: ["raw/filename.md"] # Which raw sources inform this page
-related: ["[[Other Page]]"] # Explicit cross-references
-summary: "One-line summary" # Used in index.md
----
-```
+Other top-level: `test/` (vitest suite), `eval/` (harness evaluation discipline), `.github/`
+(CI workflows), `node_modules/` (deps, gitignored).
 
-## Wikilinks
+## Working rules
 
-Use `[[Page Title]]` to link between pages. The LLM maintains these links.
-Orphan pages (no inbound links) are flagged by `wikimem lint`.
+- **Edit the right surface.** A fix to what users receive goes in top-level `skills/`, `rules/`,
+  `hooks/`, `agents/`, `templates/`. A fix to how *you* behave here goes in `.claude/`.
+- **Keep tests green.** `npm test` runs 19 tests in `test/install.test.js`. Any change to
+  `bin/install.js` or the bundled payload must keep them passing.
+- **Self-test the CLI.** Run `node bin/claude-harness.js --help` and, for payload changes, run
+  `node bin/claude-harness.js init` against a throwaway dir to confirm the scaffold still installs.
+- **Conventional commits.** `feat:`, `fix:`, `refactor:`, `docs:`, `test:`, `chore:`.
+- **Public repo.** No secrets, no personal absolute paths, no internal customer names. Run
+  `scrub-public.sh` (Energy tooling) before publishing if brain/memory notes ever cite internal
+  paths.
 
-## Operations
+## Sub-agent conventions
 
-### Ingest
+Sub-agents defined in `.claude/agents/` (code-reviewer, architect, research-agent, test-writer,
+security-reviewer, performance-analyzer, loop-auditor) are for **research and review only** — the
+parent agent implements. Sub-agents must not push commits or modify the product payload directly.
 
-When a new source is added to raw/:
+## Navigation
 
-1. Read the source completely
-2. Create/update a source summary page in wiki/sources/
-3. Identify entities mentioned → create/update entity pages
-4. Identify concepts discussed → create/update concept pages
-5. Update index.md with new/modified pages
-6. Append to log.md
-
-### Query
-
-When answering a question:
-
-1. Read index.md to find relevant pages
-2. Read the relevant pages
-3. Synthesize an answer with [[wikilink]] citations
-4. Optionally file the answer as a synthesis page
-
-### Lint
-
-Periodically check for:
-
-- Contradictions between pages
-- Stale claims superseded by newer sources
-- Orphan pages with no inbound links
-- Missing cross-references
-- Important concepts mentioned but lacking their own page
-- Data gaps that could be filled
-
-## Quality Standards
-
-- Every claim should cite its source via wikilink
-- Summaries should be concise (1-3 sentences in frontmatter)
-- Pages should be interconnected (no isolated islands)
-- Prefer updating existing pages over creating new ones
-- Flag contradictions explicitly rather than silently overwriting
+Hub: `brain/MOC - claude-harness.md`. Operating brief + full component map: `CLAUDE.md`.
