@@ -1,18 +1,18 @@
 ---
 name: sprint
-description: Plan a focused development sprint. Breaks large goals into 2-hour chunks with dependencies and parallelization opportunities.
+description: Plan a focused development sprint. Breaks large goals into 2-hour chunks with dependencies and parallelization.
 ---
 
 ## Process
 
 1. **Clarify the goal** — restate it in one sentence. If ambiguous, ask.
-2. **Decompose** — break into subtasks, each completable in ≤2 hours.
+2. **Decompose** — break into subtasks, each completable in 2 hours or less.
 3. **Map dependencies** — what blocks what? Draw the DAG.
 4. **Prioritize** by:
    - Unblocks the most downstream work
    - Highest user-facing value
    - Lowest technical risk
-5. **Identify parallelism** — which tasks can subagents handle simultaneously?
+5. **Identify parallelism** — which tasks can sub-agents handle simultaneously?
 6. **Estimate** — realistic time per task (include testing).
 7. **Output** — numbered checklist with `[ ]` checkboxes.
 
@@ -43,4 +43,4 @@ description: Plan a focused development sprint. Breaks large goals into 2-hour c
 - Never exceed 12 tasks per sprint (cognitive overload)
 - Every task must have a testable definition of done
 - Include "visual test with browser" as a task when UI is involved
-- Include "update CONTEXT.md" as the final task always
+- Include "update context docs" as the final task

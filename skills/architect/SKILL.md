@@ -1,14 +1,14 @@
 ---
 name: architect
-description: Use when making architectural decisions for the Energy/NRG platform. Loads architecture from the_complete_story.md and debates trade-offs using Socratic thinking.
+description: Make architectural decisions with structured trade-off analysis. Loads project context and debates approaches using Socratic thinking.
 ---
 
 ## Context Loading
 
-Read these files for architectural grounding:
+Read your project's architecture docs before making decisions:
 
-1. `docs/vision/the_complete_story.md` lines 1-60 (Super TLDR)
-2. `docs/vision/the_complete_story.md` lines 203-1000 (How It Actually Works)
+1. Main architecture document (TLDR section)
+2. Technical design docs for the relevant subsystem
 
 ## Decision Protocol
 
@@ -17,14 +17,14 @@ Read these files for architectural grounding:
    - Pros (why this works)
    - Cons (what breaks at scale)
    - Precedent (who does this already?)
-3. **Second-order thinking** — what happens when this scales 100x? What about 1000x?
-4. **Third-order thinking** — how does this affect the AutoLab loop? The GEA mesh?
+3. **Second-order thinking** — what happens when this scales 100x? 1000x?
+4. **Third-order thinking** — how does this affect the overall system?
 5. **Recommend one approach** with clear justification.
 6. **Name what you're sacrificing** — every choice has a cost. State it.
 
 ## Reference Patterns
 
-- Harness > model (same model, different scaffold → 42% vs 78%)
-- Bootstrap memory ≤ 2,000 tokens (Level 1 always loaded)
+- Harness > model (same model, different scaffold: 42% vs 78%)
+- Bootstrap memory under 2,000 tokens (always loaded)
 - Progressive disclosure (load skills on demand, not upfront)
-- Model routing by step complexity (Haiku for parsing, Sonnet for reasoning, Opus for architecture)
+- Model routing by step complexity (cheap for parsing, expensive for architecture)

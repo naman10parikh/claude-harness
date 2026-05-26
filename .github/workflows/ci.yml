@@ -1,0 +1,103 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  validate:
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [ubuntu-latest, macos-latest]
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Verify file structure
+        run: |
+          echo "=== Checking required files ==="
+          test -f README.md || (echo "FAIL: README.md missing" && exit 1)
+          test -f LICENSE || (echo "FAIL: LICENSE missing" && exit 1)
+          test -f CONTRIBUTING.md || (echo "FAIL: CONTRIBUTING.md missing" && exit 1)
+          test -f package.json || (echo "FAIL: package.json missing" && exit 1)
+          test -f bin/init.sh || (echo "FAIL: bin/init.sh missing" && exit 1)
+          echo "All required files present."
+
+      - name: Validate skills
+        run: |
+          echo "=== Checking skills ==="
+          SKILL_COUNT=$(find skills -name "SKILL.md" -type f | wc -l | tr -d ' ')
+          echo "Found $SKILL_COUNT skills"
+          test "$SKILL_COUNT" -eq 15 || (echo "FAIL: Expected 15 skills, found $SKILL_COUNT" && exit 1)
+          # Check each skill has frontmatter
+          for skill in skills/*/SKILL.md; do
+            if ! head -1 "$skill" | grep -q "^---"; then
+              echo "FAIL: $skill missing frontmatter"
+              exit 1
+            fi
+          done
+          echo "All skills valid."
+
+      - name: Validate hooks
+        run: |
+          echo "=== Checking hooks ==="
+          HOOK_COUNT=$(find hooks -name "*.sh" -type f | wc -l | tr -d ' ')
+          echo "Found $HOOK_COUNT hook scripts"
+          test "$HOOK_COUNT" -ge 6 || (echo "FAIL: Expected 6+ hooks, found $HOOK_COUNT" && exit 1)
+          # Check each hook has shebang
+          for hook in hooks/*.sh; do
+            if ! head -1 "$hook" | grep -q "^#!/bin/bash"; then
+              echo "FAIL: $hook missing bash shebang"
+              exit 1
+            fi
+          done
+          echo "All hooks valid."
+
+      - name: Check for leaked references
+        run: |
+          echo "=== Checking for internal references ==="
+          LEAKS=0
+          # Internal-reference patterns. Word-boundary aware so harness vocabulary
+          # like LEARNINGS.md is not falsely matched by "earning".
+          for pattern in "energy/" "@energy" "/Users/naman" "\bnaman\b" "\bearning\b" "fleet-state" "\bchairman\b"; do
+            FOUND=$(grep -rIniE "$pattern" skills/ hooks/ rules/ templates/ scripts/ bin/ examples/ 2>/dev/null || true)
+            if [ -n "$FOUND" ]; then
+              echo "LEAK: Found '$pattern' in:"
+              echo "$FOUND"
+              LEAKS=$((LEAKS + 1))
+            fi
+          done
+          if [ "$LEAKS" -gt 0 ]; then
+            echo "FAIL: $LEAKS leaked references found"
+            exit 1
+          fi
+          echo "No leaked references."
+
+      - name: Test init script (dry run)
+        run: |
+          echo "=== Testing init script ==="
+          # Create a temp directory and test init
+          TEMP_DIR=$(mktemp -d)
+          cd "$TEMP_DIR"
+          git init
+          # Run init with project type 2 (CLI tool)
+          echo "2" | bash "$GITHUB_WORKSPACE/bin/init.sh" "$TEMP_DIR" || true
+          # Check files were created
+          test -d .claude/skills || (echo "FAIL: skills not installed" && exit 1)
+          test -d .claude/hooks || (echo "FAIL: hooks not installed" && exit 1)
+          test -d memory || (echo "FAIL: memory not created" && exit 1)
+          echo "Init script works."
+          rm -rf "$TEMP_DIR"
+
+      - name: Shellcheck hooks
+        if: runner.os == 'Linux'
+        run: |
+          sudo apt-get install -y shellcheck || true
+          echo "=== Running shellcheck ==="
+          for script in hooks/*.sh scripts/*.sh bin/init.sh; do
+            echo "Checking $script..."
+            shellcheck -e SC2086,SC2034,SC2155 "$script" || echo "WARN: shellcheck issues in $script"
+          done

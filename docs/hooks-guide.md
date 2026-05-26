@@ -29,8 +29,8 @@ The most important hook. Injects full context on every session start:
 ```
 === SESSION CONTEXT ===
 - CONTEXT.md (first 20 lines)
-- Chairman checklist
-- Chairman prompt titles
+- maintainer checklist
+- maintainer prompt titles
 - Today's daily log (last 50 lines)
 - Long-term memory (first 60 lines)
 - Recent learnings (last 30 lines)
@@ -60,7 +60,7 @@ Health checks that run alongside context injection:
 
 #### complete-story-alignment.sh (SessionStart)
 
-Reminds Claude about the north star vision document (`docs/vision/the_complete_story.md`). Shows line count, last modified date, and which sections to read for different types of work.
+Reminds Claude about the north star vision document (`docs/VISION.md`). Shows line count, last modified date, and which sections to read for different types of work.
 
 #### session-end-log.sh (SessionEnd)
 
@@ -119,7 +119,7 @@ Re-injects critical context after compaction:
 3. Anchor state (pre-compaction snapshot)
 4. Today's daily log (last 40 lines)
 5. Handoff doc (session bridge)
-6. Chairman prompt titles
+6. maintainer prompt titles
 7. Uncommitted files
 8. Recent commits
 9. Inventory count
@@ -141,7 +141,7 @@ mkfs
 dd if=/dev
 ```
 
-Exit 2 with message: "BLOCKED: Destructive system command detected. Ask Naman before proceeding."
+Exit 2 with message: "BLOCKED: Destructive system command detected. Ask the maintainer before proceeding."
 
 #### Protected File Guard (PreToolUse, matcher: Write|Edit)
 

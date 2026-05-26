@@ -1,6 +1,6 @@
 ---
 name: deep-think
-description: Activate multi-modal thinking for complex decisions. Combines Socratic thinking, self-critique, second/third-order effects, and adversarial debate.
+description: Multi-modal thinking for complex decisions. Socratic questioning, self-critique, second/third-order effects, adversarial debate.
 ---
 
 ## When to Use
@@ -35,11 +35,10 @@ For every proposed solution:
 - If we do X, what does that force us to also do?
 - What doors does this close?
 - What technical debt does this create?
-- How does this affect the AutoLab improvement loop?
 
 ### Phase 4: Third-Order Effects
 
-- How does this affect the agent ecosystem 6 months from now?
+- How does this affect the project 6 months from now?
 - What will users build on top of this that we didn't intend?
 - What competitive response does this invite?
 

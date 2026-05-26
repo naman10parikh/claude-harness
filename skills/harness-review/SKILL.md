@@ -1,6 +1,6 @@
 ---
 name: harness-review
-description: Review an agent's harness (scaffold) for quality, token efficiency, and correctness. Based on harness engineering research.
+description: Review a Claude Code harness for quality, token efficiency, and correctness. Based on harness engineering research.
 ---
 
 ## The Core Insight
@@ -13,7 +13,7 @@ Same model with scaffold A scores 42%. Same model with scaffold B scores 78%. Th
 
 - [ ] Bootstrap memory under 2,000 tokens?
 - [ ] Skills loaded on-demand, not all upfront?
-- [ ] Total input under 40% of context window? (the "dumb zone" is past 60%)
+- [ ] Total input under 40% of context window? (past 60% = "dumb zone")
 
 ### 2. Tool Design
 
@@ -29,9 +29,9 @@ Same model with scaffold A scores 42%. Same model with scaffold B scores 78%. Th
 
 ### 4. Model Routing
 
-- [ ] Parsing/extraction tasks → cheapest tier (Haiku)?
-- [ ] Reasoning/planning → middle tier (Sonnet)?
-- [ ] Architecture/complex decisions → top tier (Opus)?
+- [ ] Parsing/extraction tasks directed to cheapest tier?
+- [ ] Reasoning/planning directed to middle tier?
+- [ ] Architecture/complex decisions directed to top tier?
 - [ ] Never sending 100K tokens to the expensive model?
 
 ### 5. Memory Management
@@ -42,10 +42,6 @@ Same model with scaffold A scores 42%. Same model with scaffold B scores 78%. Th
 
 ### 6. Planning
 
-- [ ] Uses TodoWrite or equivalent for multi-step coherence?
+- [ ] Uses task tracking for multi-step coherence?
 - [ ] Each step has a testable definition of done?
 - [ ] Can explain what it's doing and why at any point?
-
-## Reference
-
-Read `docs/vision/the_complete_story.md` — search for "harness engineering evidence"

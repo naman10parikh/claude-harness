@@ -154,7 +154,7 @@ ls .claude/agents/
 
 Edit `settings.local.json` and remove hook entries. Common removals:
 
-- `complete-story-alignment.sh` — only relevant if you have a vision doc at `docs/vision/the_complete_story.md`
+- `complete-story-alignment.sh` — only relevant if you have a vision doc at `docs/VISION.md`
 - `post-push-verify.sh` — only relevant if you deploy via Vercel + GitHub Actions
 - `screenshot-cleanup.sh` — only relevant if you use visual testing
 

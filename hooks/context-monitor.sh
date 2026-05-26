@@ -1,54 +1,62 @@
 #!/bin/bash
-# Context Monitor — GSD-inspired health check on session start.
-# Checks: planning state, stale tasks, memory drift, uncommitted work age.
-# Runs alongside session-start-context.sh.
+# Context health check on session start.
+# Checks: stale plans, memory bloat, uncommitted work, missing daily logs.
 
 set -euo pipefail
 
-PROJECT_DIR="${CLAUDE_PROJECT_DIR:-/Users/naman/energy}"
+PROJECT_DIR="${CLAUDE_PROJECT_DIR:-$(pwd)}"
 TODAY=$(date '+%Y-%m-%d')
 WARNINGS=""
 
-# 1. Check for stale planning state (GSD pattern: .planning/ directory)
-PLANNING_DIR="$PROJECT_DIR/.claude/plan.md"
-if [ -f "$PLANNING_DIR" ]; then
-  PLAN_AGE=$(( ($(date +%s) - $(stat -f %m "$PLANNING_DIR" 2>/dev/null || echo "$(date +%s)")) / 3600 ))
+# 1. Check for stale plan
+PLAN_FILE="$PROJECT_DIR/.claude/plan.md"
+if [ -f "$PLAN_FILE" ]; then
+  if [ "$(uname)" = "Darwin" ]; then
+    PLAN_AGE=$(( ($(date +%s) - $(stat -f %m "$PLAN_FILE")) / 3600 ))
+  else
+    PLAN_AGE=$(( ($(date +%s) - $(stat -c %Y "$PLAN_FILE")) / 3600 ))
+  fi
   if [ "$PLAN_AGE" -gt 24 ]; then
-    WARNINGS="$WARNINGS\n[CONTEXT MONITOR] plan.md is ${PLAN_AGE}h old. Review or archive it."
+    WARNINGS="$WARNINGS\n[HEALTH] plan.md is ${PLAN_AGE}h old. Review or archive it."
   fi
 fi
 
-# 2. Check uncommitted work age (oldest modified file)
-OLDEST_MODIFIED=$(git -C "$PROJECT_DIR" diff --name-only 2>/dev/null | head -1)
-if [ -n "$OLDEST_MODIFIED" ]; then
-  UNCOMMITTED_COUNT=$(git -C "$PROJECT_DIR" diff --name-only 2>/dev/null | wc -l | tr -d ' ')
-  if [ "$UNCOMMITTED_COUNT" -gt 50 ]; then
-    WARNINGS="$WARNINGS\n[CONTEXT MONITOR] $UNCOMMITTED_COUNT uncommitted files. Consider committing stable work."
+# 2. Check uncommitted file count
+UNCOMMITTED_COUNT=$(git -C "$PROJECT_DIR" diff --name-only 2>/dev/null | wc -l | tr -d ' ')
+if [ "$UNCOMMITTED_COUNT" -gt 50 ]; then
+  WARNINGS="$WARNINGS\n[HEALTH] $UNCOMMITTED_COUNT uncommitted files. Consider committing stable work."
+fi
+
+# 3. Check memory file sizes
+if [ -f "$PROJECT_DIR/memory/MEMORY.md" ]; then
+  MEMORY_SIZE=$(wc -l < "$PROJECT_DIR/memory/MEMORY.md")
+  if [ "$MEMORY_SIZE" -gt 100 ]; then
+    WARNINGS="$WARNINGS\n[HEALTH] MEMORY.md is $MEMORY_SIZE lines. Consider compressing."
   fi
 fi
 
-# 3. Check memory file sizes (prevent bloat)
-MEMORY_SIZE=$(wc -l < "$PROJECT_DIR/memory/MEMORY.md" 2>/dev/null || echo "0")
-if [ "$MEMORY_SIZE" -gt 100 ]; then
-  WARNINGS="$WARNINGS\n[CONTEXT MONITOR] MEMORY.md is $MEMORY_SIZE lines. Consider compressing."
+if [ -f "$PROJECT_DIR/memory/LEARNINGS.md" ]; then
+  LEARNINGS_SIZE=$(wc -l < "$PROJECT_DIR/memory/LEARNINGS.md")
+  if [ "$LEARNINGS_SIZE" -gt 150 ]; then
+    WARNINGS="$WARNINGS\n[HEALTH] LEARNINGS.md is $LEARNINGS_SIZE lines. Consider archiving."
+  fi
 fi
 
-LEARNINGS_SIZE=$(wc -l < "$PROJECT_DIR/memory/LEARNINGS.md" 2>/dev/null || echo "0")
-if [ "$LEARNINGS_SIZE" -gt 150 ]; then
-  WARNINGS="$WARNINGS\n[CONTEXT MONITOR] LEARNINGS.md is $LEARNINGS_SIZE lines. Consider archiving older entries."
-fi
-
-# 4. Check daily log exists for today
+# 4. Check daily log exists
 DAILY_FILE="$PROJECT_DIR/memory/daily/$TODAY.md"
 if [ ! -f "$DAILY_FILE" ]; then
-  WARNINGS="$WARNINGS\n[CONTEXT MONITOR] No daily log for $TODAY. Will be auto-created."
+  WARNINGS="$WARNINGS\n[HEALTH] No daily log for $TODAY. Will be auto-created."
 fi
 
-# 5. Check CONTEXT.md staleness (warn if not updated today)
+# 5. Check CONTEXT.md staleness
 if [ -f "$PROJECT_DIR/CONTEXT.md" ]; then
-  CONTEXT_MOD_AGE=$(( ($(date +%s) - $(stat -f %m "$PROJECT_DIR/CONTEXT.md" 2>/dev/null || echo "$(date +%s)")) / 3600 ))
-  if [ "$CONTEXT_MOD_AGE" -gt 48 ]; then
-    WARNINGS="$WARNINGS\n[CONTEXT MONITOR] CONTEXT.md not modified in ${CONTEXT_MOD_AGE}h. Consider updating."
+  if [ "$(uname)" = "Darwin" ]; then
+    CONTEXT_AGE=$(( ($(date +%s) - $(stat -f %m "$PROJECT_DIR/CONTEXT.md")) / 3600 ))
+  else
+    CONTEXT_AGE=$(( ($(date +%s) - $(stat -c %Y "$PROJECT_DIR/CONTEXT.md")) / 3600 ))
+  fi
+  if [ "$CONTEXT_AGE" -gt 48 ]; then
+    WARNINGS="$WARNINGS\n[HEALTH] CONTEXT.md not modified in ${CONTEXT_AGE}h. Consider updating."
   fi
 fi
 

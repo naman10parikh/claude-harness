@@ -20,7 +20,7 @@ When evaluating a design decision:
 4. **Precedent**: What did similar systems (Manus, GenSpark, Devin, OpenHands) choose?
 5. **Recommendation**: Pick one option with clear rationale
 
-Reference architecture: `docs/vision/the_complete_story.md` (lines 1-60 TLDR, 203-400 architecture)
+Reference architecture: `docs/VISION.md` (lines 1-60 TLDR, 203-400 architecture)
 
 Stack context: TypeScript · Next.js 15 · Claude Agent SDK · E2B · Supabase · Clerk · Vercel
 

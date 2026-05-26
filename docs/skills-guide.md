@@ -117,7 +117,7 @@ Four delegation patterns:
 | Research Swarm | Need information, not code | 3-5 background sub-agents (Haiku) |
 | Worktree Agents | Non-overlapping code changes | Each agent in isolated git worktree |
 | Fractal Teams | Large features, 3+ packages | Agents containing sub-agents |
-| Directive Swarm | Chairman voice dumps | Full decomposition + parallel execution |
+| Directive Swarm | maintainer voice dumps | Full decomposition + parallel execution |
 
 **Use when:** Task would take >15 minutes. Has 2+ independent workstreams.
 
@@ -191,7 +191,7 @@ Session-scoped cron jobs via CronCreate/CronList/CronDelete:
 | `/ceo-workflow` | Deterministic CEO workflow for recursive companies |
 | `/ceo-launch` | Launch CEO in separate tmux session |
 | `/fractal-delegation` | CEO operating system (see above) |
-| `/chairman-feedback` | Process voice dumps into tasks |
+| `/feedback` | Process voice dumps into tasks |
 | `/content-launch` | Content distribution pipeline |
 | `/x-content-engine` | X/Twitter content with multi-persona review |
 | `/agentgrid-orchestrate` | Cross-pane Claude Code orchestration |

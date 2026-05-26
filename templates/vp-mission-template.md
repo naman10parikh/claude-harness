@@ -43,7 +43,7 @@ echo "$(date '+%H:%M') | STEP_NAME | DONE | one-line summary" >> .claude/checkpo
 - Think Socratically: debate with yourself before finalizing decisions
 - Ralph Wiggum loop: keep iterating until it's right, don't stop at first attempt
 - AutoLab principle: after completing, ask "what could be improved?" and fix it
-- Complete story: read docs/vision/the_complete_story.md lines 1-60 for north star
+- Complete story: read docs/VISION.md lines 1-60 for north star
 
 ## RULES
 

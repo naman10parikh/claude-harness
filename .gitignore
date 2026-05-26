@@ -1,0 +1,19 @@
+node_modules/
+
+# Secrets — never commit
+.env
+.env.local
+.env.*.local
+
+# Ephemeral harness state
+.claude/backups/
+.claude/anchor-state.md
+.claude/last-session-output.md
+.claude/overnight-logs/
+.claude/worktrees/
+.claude/vp-signals/*.done
+.claude/vp-signals/*.needs-qa
+.claude/vp-signals/*.migrating
+memory/daily/
+.DS_Store
+*.log

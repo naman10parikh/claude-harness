@@ -1,10 +1,9 @@
 ---
-globs: ["docs/**/*.md", "CONTEXT.md", "CLAUDE.md"]
+globs: ["docs/**/*.md", "CONTEXT.md", "CLAUDE.md", "*.md"]
 ---
 
-- Never remove existing content from vision docs — only enhance, clarify, restructure
-- the_complete_story.md is the source of truth for all architectural decisions
-- CONTEXT.md tracks session progress with versioned changelog entries
-- Write in clear, non-technical language where possible (the user's test: "can a non-technical person understand the TLDR?")
+- Never remove existing content from docs — only enhance, clarify, restructure
+- Write in clear, non-technical language where possible
 - Use concrete examples, not abstractions
 - Every claim should be backed by evidence (research, benchmarks, precedent)
+- CONTEXT.md tracks session progress with versioned entries

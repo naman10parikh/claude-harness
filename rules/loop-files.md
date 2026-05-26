@@ -1,7 +1,7 @@
 ---
 globs:
   [
-    "*.energy/**",
+    "*.agent/**",
     "agents/**",
     "SOUL.md",
     "HEARTBEAT.md",
@@ -9,7 +9,7 @@ globs:
     "skills/*.md",
     "BRAND.md",
   ]
-description: Rules for the .energy agent file format. Use AGENT_FORMAT_EXTENSION constant in code — never hardcode the extension.
+description: Rules for the agent file format. Use a single AGENT_FORMAT_EXTENSION constant in code — never hardcode the extension.
 ---
 
 - SOUL.md: Identity → Personality → Boundaries (in that order)
@@ -19,4 +19,4 @@ description: Rules for the .energy agent file format. Use AGENT_FORMAT_EXTENSION
 - BRAND.md: Name rationale, symbolic connection to workflow, tagline, landing page copy.
 - ui-template.yaml: Valid types: chat, dashboard, tool-picker, flow-builder, game, custom.
 - Agent names are symbolic: one word that represents an element of the workflow being automated.
-- When referencing the file format in code, use `AGENT_FORMAT_EXTENSION` from `@energy/types/constants`.
+- When referencing the file format in code, use a single `AGENT_FORMAT_EXTENSION` constant — never hardcode the extension string.
