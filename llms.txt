@@ -1,0 +1,23 @@
+# Interactive mode (daytime)
+
+> claude-harness
+
+## Documentation
+
+- [README.md](README.md): claude-harness
+- [AGENTS.md](AGENTS.md): Conventions for any agent (Claude Code, sub-agents, CI bots) working on this repo. This is
+- [CLAUDE.md](CLAUDE.md): claude-harness is a CLI scaffolder. It installs a battle-tested Claude Code harness
+- [QUICKSTART.md](QUICKSTART.md): claude-harness is a CLI scaffolder: it drops a battle-tested Claude Code harness (hooks, skills,
+- [CONTRIBUTING.md](CONTRIBUTING.md): We welcome contributions from anyone who wants to improve their Claude Code workflow.
+- [docs/AUTO-SWITCH.md](docs/AUTO-SWITCH.md)
+- [docs/HOOKS.md](docs/HOOKS.md)
+- [docs/MEMORY-SYSTEM.md](docs/MEMORY-SYSTEM.md)
+- [docs/SKILLS.md](docs/SKILLS.md)
+- [docs/getting-started.md](docs/getting-started.md)
+- [docs/hooks-guide.md](docs/hooks-guide.md)
+- [docs/skills-guide.md](docs/skills-guide.md)
+
+## Notes
+
+- This file follows the llms.txt convention (https://llmstxt.org) so AI agents can
+  discover this repo's docs without scraping. Generated from the README + key docs.
