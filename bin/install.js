@@ -64,11 +64,17 @@ export const TIERS = {
 };
 
 // ─── Helpers ───
+// OS-generated junk that should never be copied into a scaffolded project.
+// Skipping these also keeps payload file counts deterministic across platforms
+// (macOS sprinkles .DS_Store into browsed dirs; Windows leaves Thumbs.db).
+const JUNK_FILES = new Set([".DS_Store", "Thumbs.db"]);
+
 function copyDir(src, dest) {
   if (!existsSync(src)) return 0;
   mkdirSync(dest, { recursive: true });
   let count = 0;
   for (const entry of readdirSync(src, { withFileTypes: true })) {
+    if (JUNK_FILES.has(entry.name)) continue;
     const srcPath = join(src, entry.name);
     const destPath = join(dest, entry.name);
     if (entry.isDirectory()) {

@@ -24,6 +24,7 @@
   "scripts": {
     "test": "vitest run",
     "test:watch": "vitest",
+    "eval": "node eval/run-eval.mjs",
     "self-test": "node bin/claude-harness.js --help"
   },
   "keywords": [

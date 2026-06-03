@@ -1,0 +1,123 @@
+{
+  "$comment": "Golden-task set for the claude-harness scaffold's own invariants. Consumed by eval/run-eval.mjs (npm run eval). Hamel L1 = does the structure hold; L2 = does a real scaffold install produce the expected tree. Additive: add tasks, never weaken existing assertions.",
+  "version": 1,
+  "level1_invariants": [
+    {
+      "id": "L1-skills-count",
+      "desc": "The bundled payload ships exactly 15 skills (one SKILL.md each).",
+      "check": "skillCount",
+      "op": "eq",
+      "expected": 15
+    },
+    {
+      "id": "L1-skills-frontmatter",
+      "desc": "Every bundled skill SKILL.md starts with YAML frontmatter (---).",
+      "check": "everySkillHasFrontmatter",
+      "op": "eq",
+      "expected": true
+    },
+    {
+      "id": "L1-hooks-count",
+      "desc": "The bundled payload ships at least 6 lifecycle hook scripts.",
+      "check": "hookCount",
+      "op": "gte",
+      "expected": 6
+    },
+    {
+      "id": "L1-hooks-shebang",
+      "desc": "Every bundled hook script begins with a bash shebang.",
+      "check": "everyHookHasShebang",
+      "op": "eq",
+      "expected": true
+    },
+    {
+      "id": "L1-rules-present",
+      "desc": "The bundled payload ships at least 1 context-aware rule.",
+      "check": "ruleCount",
+      "op": "gte",
+      "expected": 1
+    },
+    {
+      "id": "L1-subagents-present",
+      "desc": "The bundled payload ships at least 1 sub-agent definition.",
+      "check": "agentCount",
+      "op": "gte",
+      "expected": 1
+    },
+    {
+      "id": "L1-claude-agents-flat",
+      "desc": "This repo's own .claude/agents/ is FLAT (no .claude/agents/agents/ double-nest from the forge bug).",
+      "check": "claudeAgentsFlat",
+      "op": "eq",
+      "expected": true
+    },
+    {
+      "id": "L1-llmstxt-exists",
+      "desc": "An llms.txt agent-readable docs map exists at the repo root.",
+      "check": "llmsTxtExists",
+      "op": "eq",
+      "expected": true
+    },
+    {
+      "id": "L1-agentsmd-exists",
+      "desc": "An AGENTS.md (cross-harness agent instructions) exists at the repo root.",
+      "check": "agentsMdExists",
+      "op": "eq",
+      "expected": true
+    },
+    {
+      "id": "L1-soul-filled",
+      "desc": "identity/SOUL.md is a real identity, not an unfilled {{AGENT_NAME}} template.",
+      "check": "soulFilled",
+      "op": "eq",
+      "expected": true
+    },
+    {
+      "id": "L1-identity-no-placeholders",
+      "desc": "No identity/*.md file contains an unfilled {{...}} placeholder.",
+      "check": "identityNoPlaceholders",
+      "op": "eq",
+      "expected": true
+    }
+  ],
+  "level2_scaffold_goldens": [
+    {
+      "id": "L2-expert-install",
+      "desc": "Installing the expert tier into a clean dir yields the full harness: 15 skills, >=6 hooks, all bundled rules, settings.local.json, memory/, resources/.",
+      "tier": "expert",
+      "language": "typescript",
+      "projectType": "agent-project",
+      "expect": {
+        "skillCount": 15,
+        "hookCountGte": 6,
+        "files": [
+          ".claude/settings.local.json",
+          ".claude/skills/self-improve/SKILL.md",
+          ".claude/hooks/session-start-context.sh",
+          "memory/MEMORY.md",
+          "resources/unread",
+          "CLAUDE.md"
+        ],
+        "noJunk": [".claude/skills/.DS_Store"]
+      }
+    },
+    {
+      "id": "L2-starter-install",
+      "desc": "Installing the starter tier yields a minimal harness: 2 skills, 2 hooks, no memory/.",
+      "tier": "starter",
+      "language": "typescript",
+      "projectType": "web-app",
+      "expect": {
+        "skillCount": 2,
+        "hookCountGte": 2,
+        "files": [
+          ".claude/skills/troubleshoot/SKILL.md",
+          ".claude/skills/validate/SKILL.md",
+          ".claude/hooks/stop-verify.sh",
+          "CLAUDE.md"
+        ],
+        "absentFiles": ["memory"]
+      }
+    }
+  ]
+}
