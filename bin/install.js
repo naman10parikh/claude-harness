@@ -13,6 +13,7 @@ import {
 import { join, dirname, resolve } from "path";
 import { fileURLToPath } from "url";
 import { execSync } from "child_process";
+import { logRun } from "../lib/run-log.mjs";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
@@ -388,5 +389,19 @@ export function install(opts) {
     updateGitignore(projectDir);
   }
 
-  return { skillCount, hookCount, ruleCount, scriptCount };
+  const result = { skillCount, hookCount, ruleCount, scriptCount };
+
+  // ─── Observability: append a run record for this state-mutating scaffold install ───
+  // Suppressed under quiet (tests/eval) so the suite never writes to the real audit log.
+  if (!quiet) {
+    logRun("scaffold-install", {
+      projectName,
+      language,
+      tier,
+      projectType,
+      ...result,
+    });
+  }
+
+  return result;
 }

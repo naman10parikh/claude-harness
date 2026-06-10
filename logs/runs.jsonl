@@ -1,0 +1,5 @@
+{"ts":"2026-06-07T05:02:44.432Z","action":"memory-search","query":"two harness separation product payload","limit":3,"hits":3}
+{"ts":"2026-06-07T05:02:46.422Z","action":"memory-search","query":"hooks lifecycle compaction memory flush","limit":3,"hits":3}
+{"ts":"2026-06-07T05:03:02.540Z","action":"scaffold-install","projectName":"obs-test","language":"typescript","tier":"starter","projectType":"cli-tool","skillCount":2,"hookCount":2,"ruleCount":2,"scriptCount":1}
+{"ts":"2026-06-07T05:18:17.467Z","action":"memory-search","query":"hooks compaction memory","limit":3,"hits":3}
+{"ts":"2026-06-10T03:15:15.061Z","action":"memory-search","query":"two harness separation","limit":2,"hits":2}

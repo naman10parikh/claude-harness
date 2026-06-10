@@ -6,6 +6,9 @@ import { existsSync } from "fs";
 import { join, resolve } from "path";
 import { execSync } from "child_process";
 import { install, TIERS } from "./install.js";
+import { search as memorySearch, indexStats } from "../lib/memory-search.mjs";
+import { logRun } from "../lib/run-log.mjs";
+import { loadEnv } from "../lib/load-env.mjs";
 
 // ─── Colors (ANSI escape codes, zero dependencies) ───
 const c = {
@@ -186,6 +189,78 @@ async function verifyCommand() {
   }
 }
 
+// ─── Memory-search command ───
+// Queryable BM25 index over THIS repo's own corpus (brain/, docs/, memory/, identity/, MEMORY.md).
+async function memorySearchCommand(query, options) {
+  const q = Array.isArray(query) ? query.join(" ") : query;
+  if (!q || !q.trim()) {
+    console.log(c.red("  Usage: claude-harness memory-search <query> [--limit N]"));
+    process.exit(1);
+  }
+  const limit = Number(options.limit) > 0 ? Number(options.limit) : 5;
+  const results = memorySearch(q, { limit });
+
+  // Observability: every query is a recorded run.
+  logRun("memory-search", { query: q, limit, hits: results.length });
+
+  const stats = indexStats();
+  console.log("");
+  console.log(
+    c.dim(`  indexed ${stats.chunks} chunks across ${stats.files} files`),
+  );
+  console.log(c.bold(`  memory-search: "${q}"`));
+  console.log("");
+  if (results.length === 0) {
+    console.log(c.yellow("  No matches."));
+    console.log("");
+    return;
+  }
+  results.forEach((r, i) => {
+    console.log(
+      `  ${c.cyan(String(i + 1).padStart(2))}. ${c.bold(r.rel)}:${r.line}  ${c.dim(`(score ${r.score.toFixed(2)})`)}`,
+    );
+    console.log(`      ${r.snippet}`);
+    console.log("");
+  });
+}
+
+// ─── Sandbox-run command ───
+// Runs the scaffolder's CORE action inside an isolated E2B Firecracker microVM.
+async function sandboxRunCommand(options) {
+  loadEnv(); // pull E2B_API_KEY from this repo's .env (no overwrite of existing env)
+  console.log("");
+  console.log(c.bold("  sandbox-run") + c.dim(" — scaffolding inside an E2B sandbox..."));
+  if (!process.env.E2B_API_KEY) {
+    console.log(c.red("  E2B_API_KEY not found in environment or .env."));
+    process.exit(1);
+  }
+  const { sandboxRun } = await import("../lib/sandbox-run.mjs");
+  const result = await sandboxRun({ tier: options.tier || "starter" });
+  console.log("");
+  console.log(c.dim(`  sandbox: ${result.sandboxId ?? "(none)"}  (${result.durationMs}ms)`));
+  if (result.stdout) {
+    console.log(c.dim("  --- sandbox output (tail) ---"));
+    console.log(
+      result.stdout
+        .trim()
+        .split("\n")
+        .slice(-12)
+        .map((l) => "  " + l)
+        .join("\n"),
+    );
+  }
+  if (result.ok) {
+    console.log("");
+    console.log(c.green("  PASS") + " harness scaffolded successfully inside the sandbox.");
+    console.log("");
+  } else {
+    console.log("");
+    console.log(c.red("  FAIL") + ` ${result.stderr || "sandbox run did not verify"}`);
+    console.log("");
+    process.exit(1);
+  }
+}
+
 // ─── CLI setup ───
 program
   .name("claude-harness")
@@ -202,6 +277,18 @@ program
   .command("verify")
   .description("Check harness setup is correct")
   .action(verifyCommand);
+
+program
+  .command("memory-search <query...>")
+  .description("Search this repo's own knowledge corpus (BM25 over brain/docs/memory/identity)")
+  .option("-l, --limit <n>", "Max results to return", "5")
+  .action(memorySearchCommand);
+
+program
+  .command("sandbox-run")
+  .description("Run the scaffolder's core action inside an isolated E2B sandbox (proves isolation)")
+  .option("-t, --tier <tier>", "Tier to scaffold in the sandbox", "starter")
+  .action(sandboxRunCommand);
 
 // Default to init if no command given
 program.action(async () => {
