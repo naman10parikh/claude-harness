@@ -8,6 +8,9 @@
   },
   "files": [
     "bin",
+    "lib",
+    "mcp-server.mjs",
+    ".claude-plugin",
     "templates",
     "skills",
     "hooks",
