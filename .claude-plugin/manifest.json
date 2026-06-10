@@ -1,0 +1,67 @@
+{
+  "schema_version": "1.0",
+  "name": "claude-harness",
+  "display_name": "claude-harness — Battle-Tested Claude Code Scaffold",
+  "description": "Install a battle-tested Claude Code harness (skills + hooks + rules + sub-agents + memory) into any project, query the harness's own knowledge corpus over BM25, and dry-run scaffold plans — same model, 2x output.",
+  "version": "1.0.0",
+  "author": "Naman Parikh <naman10parikh@gmail.com>",
+  "license": "MIT",
+  "repository": "https://github.com/naman10parikh/claude-harness",
+  "mcp_servers": [
+    {
+      "name": "claude-harness",
+      "description": "claude-harness's own MCP server (stdio JSON-RPC): BM25 memory search over the repo corpus, tier listing, and dry-run scaffold planning via the real installer.",
+      "transport": "stdio",
+      "command": "node",
+      "args": ["mcp-server.mjs"],
+      "env": {}
+    }
+  ],
+  "components": {
+    "skills": {
+      "path": "skills/",
+      "count": 15,
+      "description": "On-demand slash-command workflows the scaffolder installs into .claude/skills/ (self-improve, architect, deep-think, troubleshoot, ...)."
+    },
+    "hooks": {
+      "path": "hooks/",
+      "count": 6,
+      "description": "Lifecycle shell scripts (session-start context load, pre-compact memory flush, post-compact restore, stop-verify, session-end log, audit-log) wired via templates/settings.local.json."
+    },
+    "commands": {
+      "path": ".claude/commands/",
+      "count": 16,
+      "description": "Slash commands for operating this repo (/start, /status, /wrap-up, /handoff, /validate, ...)."
+    },
+    "rules": {
+      "path": "rules/",
+      "count": 7,
+      "description": "Context-aware rule files auto-loaded by glob match (code-quality, git-discipline, language rules)."
+    },
+    "agents": {
+      "path": "agents/",
+      "count": 7,
+      "description": "Sub-agent definitions (code-reviewer, test-writer, research-agent, ...) installed to .claude/agents/."
+    }
+  },
+  "capabilities": {
+    "tools": [
+      {
+        "name": "memory_search",
+        "description": "BM25 search over claude-harness's own knowledge corpus (brain/, docs/, memory/, identity/, MEMORY.md). Returns top scored paragraph chunks with file:line.",
+        "when_to_use": "When you need prior decisions, harness conventions, or learnings from this repo's own memory instead of re-deriving them."
+      },
+      {
+        "name": "list_tiers",
+        "description": "List the scaffolder's tiers (starter/pro/expert) and exactly what each installs (skill/hook/rule counts, memory).",
+        "when_to_use": "When choosing which harness tier to install into a project."
+      },
+      {
+        "name": "scaffold_plan",
+        "description": "Dry-run plan: report exactly what files a scaffold install would produce for a given tier/language/projectType (runs the real installer into a throwaway temp dir).",
+        "when_to_use": "Before running `claude-harness init`, to preview the exact file footprint without touching the target project."
+      }
+    ]
+  },
+  "install_instructions": "1. No build step (plain Node ESM, zero external deps for the server).\n2. Add this plugin to Claude Code: Settings → Plugins → Add local plugin → select this directory.\n3. The memory_search, list_tiers, and scaffold_plan tools are now available in any Claude Code session.\n4. CLI equivalents: `claude-harness memory-search <query>` and `claude-harness sandbox-run`."
+}

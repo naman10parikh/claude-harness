@@ -1,0 +1,41 @@
+name: Test
+
+# Red-blocking behavioral suite (Evals) + an enabled scheduled/dispatchable run (Dispatch).
+# - push/PR: every change to main must keep the 19 vitest behavioral tests AND the
+#   13 golden-task scaffold evals green. A red run blocks merge — no --passWithNoTests.
+# - workflow_dispatch: manual re-run of the full suite on demand.
+# - schedule: weekly drift check (Mondays 09:00 UTC) — catches breakage from
+#   environment/toolchain drift even when no commits land.
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+  schedule:
+    - cron: "0 9 * * 1"
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 10
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: pnpm
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Run behavioral test suite (vitest — 19 tests, red-blocking)
+        run: pnpm test
+
+      - name: Run golden-task scaffold evals (Hamel L1 invariants + L2 live scaffolds)
+        run: pnpm run eval
