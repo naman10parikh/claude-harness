@@ -17,3 +17,5 @@ node_modules/
 memory/daily/
 .DS_Store
 *.log
+# The improvement loop's local proposals (CI keeps them as a run artifact)
+logs/improve/

@@ -1,0 +1,15 @@
+{
+  "description": "Claude Harness: at the start of each session, load the project's context, memory, learnings and git state.",
+  "hooks": {
+    "SessionStart": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash \"${CLAUDE_PLUGIN_ROOT}/hooks/session-start-context.sh\""
+          }
+        ]
+      }
+    ]
+  }
+}

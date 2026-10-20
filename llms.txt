@@ -1,23 +1,42 @@
-# Interactive mode (daytime)
+# Claude Harness
 
-> claude-harness
+> One command installs a tested Claude Code harness: skills, hooks, rules, sub-agents and memory. claude-harness (`claude-harness`) copies a tested `.claude/` setup and a `memory/` folder into any project in three tiers (starter, pro, expert); `init` takes flags so an agent can run it without prompts, `verify` checks the result, and `sandbox-run` tries it inside an E2B microVM first. It ships a CLI, an MCP server (`claude-harness-mcp`, three tools), 18 skills and a Claude Code plugin, and it improves itself through its own golden tasks.
 
-## Documentation
+## Start here
 
-- [README.md](README.md): claude-harness
-- [AGENTS.md](AGENTS.md): Conventions for any agent (Claude Code, sub-agents, CI bots) working on this repo. This is
-- [CLAUDE.md](CLAUDE.md): claude-harness is a CLI scaffolder. It installs a battle-tested Claude Code harness
-- [QUICKSTART.md](QUICKSTART.md): claude-harness is a CLI scaffolder: it drops a battle-tested Claude Code harness (hooks, skills,
-- [CONTRIBUTING.md](CONTRIBUTING.md): We welcome contributions from anyone who wants to improve their Claude Code workflow.
-- [docs/AUTO-SWITCH.md](docs/AUTO-SWITCH.md)
-- [docs/HOOKS.md](docs/HOOKS.md)
-- [docs/MEMORY-SYSTEM.md](docs/MEMORY-SYSTEM.md)
-- [docs/SKILLS.md](docs/SKILLS.md)
-- [docs/getting-started.md](docs/getting-started.md)
-- [docs/hooks-guide.md](docs/hooks-guide.md)
-- [docs/skills-guide.md](docs/skills-guide.md)
+- [AGENTS.md](AGENTS.md): what it does, the two surfaces, every command and MCP tool, the editing rules
+- [README.md](README.md): overview, one-step install for every coding agent, quick start
 
-## Notes
+## Skills
 
-- This file follows the llms.txt convention (https://llmstxt.org) so AI agents can
-  discover this repo's docs without scraping. Generated from the README + key docs.
+- [install-harness](skills/install-harness/SKILL.md): install the harness without prompts, pick the tier, confirm it works
+- [debug-harness-hooks](skills/debug-harness-hooks/SKILL.md): find why a hook does not fire, fails, or blocks the wrong thing
+- [upgrade-harness](skills/upgrade-harness/SKILL.md): bring an installed harness up to date without losing local edits
+- [All 18 skills](docs/SKILLS.md): the general harness skills and these three
+
+## MCP tools
+
+- [MCP server source](mcp-server.mjs): three tools over stdio: list_tiers, scaffold_plan, memory_search
+- [Plugin manifest](.claude-plugin/plugin.json): the Claude Code plugin, named harness (skills, sub-agents, hook, MCP server)
+- [Gemini CLI extension](gemini-extension.json): context and MCP server for Gemini CLI
+- [A2A agent card](.well-known/agent-card.json): name, description, skills
+
+## Identity
+
+- [SOUL.md](identity/SOUL.md): who Harness is, its mission and boundaries
+- [BRAND.md](identity/BRAND.md): why the name, the tagline
+- [HEARTBEAT.md](identity/HEARTBEAT.md): what it checks and how often
+
+## Docs
+
+- [QUICKSTART.md](QUICKSTART.md): from nothing to an installed harness
+- [docs/HOOKS.md](docs/HOOKS.md), [docs/MEMORY-SYSTEM.md](docs/MEMORY-SYSTEM.md), [docs/AUTO-SWITCH.md](docs/AUTO-SWITCH.md): how the payload works
+- [Golden tasks](eval/README.md): what the evals check
+- [dsip.json](dsip.json): the self-improvement contract (level L2)
+- [CONTRIBUTING.md](CONTRIBUTING.md), [SECURITY.md](SECURITY.md)
+
+## Optional
+
+- [MEMORY.md](memory/MEMORY.md): long-term memory index
+- [LEARNINGS.md](memory/LEARNINGS.md): corrections that became rules
+- [Knowledge graph hub](brain/MOC%20-%20claude-harness.md): the Obsidian brain

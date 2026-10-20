@@ -21,6 +21,13 @@ const c = {
   magenta: (s) => `\x1b[35m${s}\x1b[0m`,
 };
 
+// The values each init flag accepts (the same choices the prompts offer).
+const CHOICES = {
+  language: ["typescript", "python", "general"],
+  tier: Object.keys(TIERS),
+  type: ["web-app", "cli-tool", "agent-project"],
+};
+
 // ─── Init command ───
 async function initCommand(targetDir, options) {
   const projectDir = resolve(targetDir || ".");
@@ -29,14 +36,26 @@ async function initCommand(targetDir, options) {
   console.log("");
   console.log(c.bold("  claude-harness"));
   console.log(
-    c.dim("  Battle-tested Claude Code scaffold. Same model, 2x output."),
+    c.dim("  One command installs a tested Claude Code harness: skills, hooks, rules, sub-agents and memory."),
   );
   console.log("");
+
+  // Flags let an agent or a script run init without prompts; any flag left out is asked for.
+  for (const [flag, allowed] of Object.entries(CHOICES)) {
+    if (options[flag] !== undefined && !allowed.includes(options[flag])) {
+      console.log(c.red(`  --${flag} must be one of: ${allowed.join(", ")}`));
+      process.exit(1);
+    }
+  }
 
   // Check if already initialized
   if (existsSync(claudeDir) && !options.force) {
     const existing = existsSync(join(claudeDir, "settings.local.json"));
     if (existing) {
+      if (!process.stdin.isTTY) {
+        console.log(c.yellow("  A harness already exists here. Pass --force to overwrite it."));
+        process.exit(1);
+      }
       const overwrite = await confirm({
         message: "A harness already exists in this directory. Overwrite?",
         default: false,
@@ -50,13 +69,17 @@ async function initCommand(targetDir, options) {
 
   // Project name
   const dirName = projectDir.split("/").pop() || "my-project";
-  const projectName = await input({
-    message: "Project name:",
-    default: dirName,
-  });
+  const projectName =
+    options.name ??
+    (await input({
+      message: "Project name:",
+      default: dirName,
+    }));
 
   // Language
-  const language = await select({
+  const language =
+    options.language ??
+    await select({
     message: "Primary language:",
     choices: [
       { value: "typescript", name: "TypeScript" },
@@ -66,7 +89,9 @@ async function initCommand(targetDir, options) {
   });
 
   // Tier
-  const tier = await select({
+  const tier =
+    options.tier ??
+    await select({
     message: "Harness level:",
     choices: [
       {
@@ -85,7 +110,9 @@ async function initCommand(targetDir, options) {
   });
 
   // Project type (for CLAUDE.md example selection)
-  const projectType = await select({
+  const projectType =
+    options.type ??
+    await select({
     message: "Project type:",
     choices: [
       { value: "web-app", name: "Web app (Next.js, React, etc.)" },
@@ -143,7 +170,7 @@ async function initCommand(targetDir, options) {
     `    ${c.dim("3.")} Run  ${c.bold("claude")} — hooks activate automatically`,
   );
   console.log("");
-  console.log(c.dim("  The harness is the product. Same model, 2x output."));
+  console.log(c.dim("  The harness is the product."));
   console.log("");
 }
 
@@ -264,13 +291,17 @@ async function sandboxRunCommand(options) {
 // ─── CLI setup ───
 program
   .name("claude-harness")
-  .description("Battle-tested Claude Code scaffold. Same model, 2x output.")
+  .description("One command installs a tested Claude Code harness: skills, hooks, rules, sub-agents and memory.")
   .version("1.0.0");
 
 program
   .command("init [directory]")
   .description("Initialize a Claude Code harness in your project")
   .option("-f, --force", "Overwrite existing harness files")
+  .option("-n, --name <name>", "Project name (skips the prompt)")
+  .option("-l, --language <language>", "typescript | python | general (skips the prompt)")
+  .option("-t, --tier <tier>", "starter | pro | expert (skips the prompt)")
+  .option("-p, --type <type>", "web-app | cli-tool | agent-project (skips the prompt)")
   .action(initCommand);
 
 program

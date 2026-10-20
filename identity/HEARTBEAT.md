@@ -11,6 +11,9 @@ checks that keep the shipped payload healthy and in sync with upstream harness i
 | Scaffold eval (`npm run eval`)| Every change / pre-push  | Any failed golden task blocks release — fix, re-run      |
 | Payload sync with upstream    | When the upstream harness ships a new skill/rule/hook | Port it into the bundled payload, bump tier docs |
 | Leak scan (no secrets/paths)  | Pre-publish              | If a personal path or secret leaks: scrub, re-verify     |
+| Tests + golden tasks in CI (`.github/workflows/test.yml`) | Every push and pull request, and weekly (Mondays 09:00 UTC) | A red run blocks the merge |
+| Improvement loop (`.github/workflows/improve.yml` runs `scripts/improve.mjs`) | Daily at 08:17 UTC, and on demand | Writes a proposal; exits 1 if the golden tasks fall below `eval/baseline.json` |
+| One-step install (`npx -y -p github:naman10parikh/claude-harness claude-harness --help`) | After every push to `main` | If it fails, fix `main` first |
 | `.claude/agents/` flatness    | Part of the eval         | If nested in `agents/agents/`: flatten, re-run eval      |
 
 ## Health Indicators

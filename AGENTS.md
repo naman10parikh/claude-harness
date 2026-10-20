@@ -1,57 +1,119 @@
-# AGENTS.md — claude-harness orchestration conventions
+# AGENTS.md: Claude Harness
 
-Conventions for any agent (Claude Code, sub-agents, CI bots) working **on this repo**. This is
-not user-facing product documentation — for that see `README.md` and `docs/`.
+> The one set of instructions for every coding agent (Codex, Cursor, OpenCode, Copilot, Claude Code,
+> Gemini CLI) and for people. `CLAUDE.md` and `GEMINI.md` import this file. The brain hub is
+> [`brain/MOC - claude-harness.md`](./brain/MOC%20-%20claude-harness.md).
 
-## Repo layout — what an agent needs to know
+## What it does
 
-This repo has two distinct surfaces. **Never edit one when you mean the other.**
+`claude-harness` copies a tested Claude Code setup into any project: skills, lifecycle hooks (context
+at session start, a memory flush before compaction, a check before stopping), rules, sub-agents,
+settings and a `memory/` folder. It comes in three tiers: `starter` (2 skills, 2 hooks), `pro` (5
+skills, 4 hooks, memory) and `expert` (everything). The idea behind it: the same model does better
+work inside a better harness, so the harness is the product.
 
-### Product payload (shipped to users — listed in `package.json` `files`)
+## Two surfaces: never edit one when you mean the other
 
-| Dir          | Role                                                                   |
-| ------------ | ---------------------------------------------------------------------- |
-| `bin/`       | CLI entry: `claude-harness.js` (commands), `install.js`, `init.sh`     |
-| `templates/` | CLAUDE.md template, `settings.local.json`, mission/checkpoint, memory  |
-| `skills/`    | Catalog of slash-command skills the scaffolder installs                |
-| `rules/`     | Context-aware rule files the scaffolder installs                       |
-| `hooks/`     | Lifecycle shell scripts the scaffolder installs                        |
-| `agents/`    | Sub-agent definitions the scaffolder installs                          |
-| `examples/`  | Sample CLAUDE.md per project type (web-app, cli-tool, agent-project)   |
-| `scripts/`   | Helper scripts (`verify.sh`, `auto-switch.sh`) the scaffolder installs |
-| `docs/`      | End-user documentation for the scaffolded harness                      |
+| Surface | Paths | Who it is for |
+| --- | --- | --- |
+| **The payload** (listed in `package.json` `files`) | `bin/ templates/ skills/ rules/ hooks/ agents/ examples/ scripts/ docs/` | Copied into other people's projects by `init` |
+| **This repository's own harness** | `.claude/ brain/ identity/ memory/` | How agents behave while developing claude-harness |
 
-### This repo's own harness (how agents operate while developing here)
+A change to top-level `skills/` changes what every user receives; a change to `.claude/skills/`
+changes how you behave here. When in doubt, check `package.json` `files`.
 
-| Dir         | Role                                                                  |
-| ----------- | --------------------------------------------------------------------- |
-| `.claude/`  | This repo's own skills/rules/hooks/agents/commands + local settings   |
-| `brain/`    | Company-brain knowledge graph (Obsidian vault): MOC + ORG notes       |
-| `identity/` | Agent-format identity: SOUL, BRAND, HEARTBEAT, MEMORY                 |
-| `memory/`   | Long-term memory: MEMORY.md, LEARNINGS.md, daily/, topics/, archive/  |
+## Its tools and how to call them
 
-Other top-level: `test/` (vitest suite), `eval/` (harness evaluation discipline), `.github/`
-(CI workflows), `node_modules/` (deps, gitignored).
+**Command line.** Run `npx -y -p github:naman10parikh/claude-harness claude-harness <command>` for
+the latest code. `npx claude-harness` runs the npm release 1.0.0 (March 2026), which is older.
 
-## Working rules
+| Command | What it does |
+| --- | --- |
+| `init [dir] [--name n] [--language l] [--tier t] [--type p] [--force]` | Install the harness. With all four flags it asks nothing; any flag left out is asked for. Without a terminal it will not overwrite an existing harness unless `--force`. |
+| `verify` | Check an installed harness (runs `scripts/verify.sh` when present). |
+| `sandbox-run [--tier t]` | Install the harness inside a fresh E2B microVM and confirm it worked. Needs `E2B_API_KEY`. |
+| `memory-search <query...> [--limit n]` | BM25 search over this repository's own notes (brain/, docs/, memory/, identity/). |
+| `--help`, `--version` | Help and version. |
 
-- **Edit the right surface.** A fix to what users receive goes in top-level `skills/`, `rules/`,
-  `hooks/`, `agents/`, `templates/`. A fix to how *you* behave here goes in `.claude/`.
-- **Keep tests green.** `npm test` runs 19 tests in `test/install.test.js`. Any change to
-  `bin/install.js` or the bundled payload must keep them passing.
-- **Self-test the CLI.** Run `node bin/claude-harness.js --help` and, for payload changes, run
-  `node bin/claude-harness.js init` against a throwaway dir to confirm the scaffold still installs.
-- **Conventional commits.** `feat:`, `fix:`, `refactor:`, `docs:`, `test:`, `chore:`.
-- **Public repo.** No secrets, no personal absolute paths, no internal customer names. Run
-  `scrub-public.sh` (Energy tooling) before publishing if brain/memory notes ever cite internal
-  paths.
+Values: `--language typescript|python|general`, `--tier starter|pro|expert`,
+`--type web-app|cli-tool|agent-project`. Every install, search and sandbox run appends a line to
+`logs/runs.jsonl` (or to `CLAUDE_HARNESS_RUNS_FILE`).
 
-## Sub-agent conventions
+**MCP server.** `npx -y -p github:naman10parikh/claude-harness claude-harness-mcp` speaks JSON-RPC
+over stdio.
 
-Sub-agents defined in `.claude/agents/` (code-reviewer, architect, research-agent, test-writer,
-security-reviewer, performance-analyzer, loop-auditor) are for **research and review only** — the
-parent agent implements. Sub-agents must not push commits or modify the product payload directly.
+| Tool | What it does |
+| --- | --- |
+| `list_tiers` | The three tiers and what each installs. |
+| `scaffold_plan` | Preview an install: runs the real installer into a throwaway folder and reports the counts (`tier`, `language`, `projectType`). |
+| `memory_search` | BM25 search over this repository's own notes (`query`, optional `limit`). |
 
-## Navigation
+**Skills.** 18 in [`skills/`](skills/): 15 general harness skills (self-improve, deep-think,
+architect, troubleshoot, validate and more) and 3 written for the harness itself:
+`install-harness`, `debug-harness-hooks` and `upgrade-harness`.
 
-Hub: `brain/MOC - claude-harness.md`. Operating brief + full component map: `CLAUDE.md`.
+**Sub-agents.** In `.claude/agents/`: `harness-auditor` (audits an installed harness: what fires, what
+is broken, what it costs at session start) and `payload-reviewer` (reviews a payload change before it
+ships), plus a general toolkit: `architect`, `code-reviewer`, `loop-auditor`, `performance-analyzer`,
+`research-agent`, `security-reviewer`, `test-writer`. The payload's own copies of the general seven
+live in `agents/`. They read and report; the parent edits.
+
+## Where things live
+
+| Path | What lives here |
+| --- | --- |
+| `bin/claude-harness.js`, `bin/install.js`, `bin/init.sh` | The CLI, the installer (tiers, copy logic, settings) and the bash installer CI runs. |
+| `mcp-server.mjs` | The MCP server. |
+| `lib/` | Memory search, the run log, the E2B sandbox runner, a small `.env` loader. |
+| `skills/`, `hooks/`, `rules/`, `agents/`, `templates/`, `examples/`, `scripts/`, `docs/` | The payload. `hooks/hooks.json` wires the plugin's session-start hook. |
+| `test/`, `eval/` | 19 unit tests and 22 golden tasks (L1 payload invariants, L2 live scaffolds, L3 surfaces). |
+| `identity/`, `memory/`, `brain/` | SOUL, BRAND, HEARTBEAT and MEMORY; long-term memory and append-only LEARNINGS; the Obsidian brain. |
+| `.claude/` | This repository's own harness: rules, skills, hooks, agents, settings. |
+| `.claude-plugin/`, `gemini-extension.json`, `.well-known/agent-card.json` | Claude Code plugin (named `harness`), Gemini CLI extension, A2A agent card. |
+| `dsip.json`, `scripts/improve.mjs`, `.github/workflows/` | The self-improvement contract, its loop, CI (structure, leaks, tests, golden tasks) and the daily loop. |
+
+## Build, test, run
+
+```bash
+pnpm install          # Node >= 18; no build step
+pnpm test             # 19 unit tests of the installer
+pnpm run eval         # 22 golden tasks
+pnpm improve          # the self-improvement loop; writes logs/improve/latest.md
+node bin/claude-harness.js init /tmp/try --name try --language general --tier starter --type cli-tool
+```
+
+Never claim a change works until `pnpm test` and `pnpm run eval` are green and you have installed the
+changed tier into a scratch folder and read what it wrote.
+
+## Editing rules
+
+- **Counts move together.** A new skill, hook or rule in the payload changes the counts in
+  `test/install.test.js`, `eval/golden-tasks.json`, `.github/workflows/ci.yml`, `docs/` and the README.
+- **Hooks are portable.** Start with `#!/bin/bash`, use `$CLAUDE_PROJECT_DIR`, and guard `git` and
+  `find` pipelines with `|| true`: hooks run under `set -euo pipefail` in folders you do not control.
+- **No leaks in the payload.** No secrets, home-folder paths, internal project names or personal
+  email. CI's leak check scans the payload folders on every push.
+- **Additive.** Never delete a user's files; `init` writes CLAUDE.md and memory files only when they
+  are missing (or with `--force`).
+
+## Commit grammar
+
+```
+feat(skill):    a new or changed capability
+feat(employee): an agent-role or persona change
+feat(company):  a repository-wide structural change
+fix: / docs: / refactor: / test: / chore:  conventional commits
+```
+
+## Memory and brain
+
+- A new durable decision: one line in [memory/MEMORY.md](./memory/MEMORY.md) under the right header.
+- An error fixed: a root-cause entry in [memory/LEARNINGS.md](./memory/LEARNINGS.md), ending in a rule.
+- Anything worth finding later: link it from the [MOC](./brain/MOC%20-%20claude-harness.md).
+
+## What not to do
+
+- Never edit the payload when you mean `.claude/`, or the reverse.
+- Never print, log or commit `E2B_API_KEY` or any other key.
+- Never let a hook block a user's session for a reason it does not print.
+- Never ship a count, tier or file list in the docs that the installer does not produce.

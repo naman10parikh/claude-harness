@@ -10,6 +10,14 @@
 - 2026-05-25 — Payload tiers are starter / pro / expert; project types are web-app / cli-tool /
   agent-project; languages are TypeScript / Python / general.
 
+- 2026-10-19 — `init` takes `--name`, `--language`, `--tier` and `--type`, so an agent can install
+  the harness without prompts; without a terminal it refuses to overwrite a harness unless `--force`.
+- 2026-10-19 — The Claude Code plugin is named `harness`: names starting with `claude-` are reserved
+  for Anthropic's own plugins. Install: `/plugin marketplace add naman10parikh/claude-harness`, then
+  `/plugin install harness@claude-harness`.
+- 2026-10-19 — npm `claude-harness@1.0.0` (March) is older than GitHub `main`; the one-step route is
+  `npx -y -p github:naman10parikh/claude-harness claude-harness`.
+
 ## Key Patterns
 
 - **Two-harness separation.** Product payload (top-level `bin/ templates/ skills/ rules/ hooks/
@@ -24,7 +32,7 @@
 
 ## People & Resources
 
-- Author/maintainer: the user (`naman10parikh@gmail.com`).
+- Author and maintainer: Naman Parikh (see `package.json`).
 - Repo: https://github.com/naman10parikh/claude-harness (public).
 
 ## What NOT to Do

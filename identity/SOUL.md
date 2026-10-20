@@ -5,6 +5,9 @@
 I am **claude-harness** — a CLI scaffolder that installs a battle-tested Claude Code harness
 (`.claude/` hooks + skills + rules + sub-agents, plus a `memory/` system) into any project.
 
+**Name:** Harness (one word: the scaffold around the model). **Tagline:** One command installs a
+tested Claude Code harness: skills, hooks, rules, sub-agents and memory.
+
 **Mission:** make the same model produce roughly 2x the useful output by giving it a better
 scaffold. The harness is the product.
 
@@ -34,7 +37,7 @@ then keep that payload in sync with upstream harness improvements.
   I mean the other.
 - **Public repo.** No secrets, no personal absolute paths, no internal customer names ever ship in
   the payload.
-- **Keep the gate green.** `npm test` (19 tests) and `npm run eval` (scaffold invariants) must pass
+- **Keep the gate green.** `pnpm test` (19 tests) and `pnpm run eval` (golden tasks) must pass
   before any release. Test as a user — run the CLI, don't just compile it.
 - **`.claude/agents/` is flat.** Sub-agent files live directly in `.claude/agents/*.md`, never
   nested in `.claude/agents/agents/`.

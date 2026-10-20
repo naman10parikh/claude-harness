@@ -125,7 +125,7 @@ describe("expert tier", () => {
       quiet: true,
     });
 
-    expect(result.skillCount).toBe(15);
+    expect(result.skillCount).toBe(18);
     expect(result.hookCount).toBe(6);
     // Expert tier ships every bundled rule template (rules: null). The repo
     // bundles 7: agentgrid, code-quality, design, docs, loop-files, react, typescript.

@@ -2,7 +2,7 @@
 
 Skills are reusable workflows that Claude loads on demand. Only ~70 tokens of metadata per skill are loaded at startup.
 
-## Included Skills (15)
+## Included Skills (18)
 
 ### Meta (Self-Improvement)
 
@@ -33,6 +33,14 @@ Skills are reusable workflows that Claude loads on demand. Only ~70 tokens of me
 | `/memory-compression`  | Production memory management across compactions |
 | `/integrate-resources` | Process new resources and extract insights      |
 | `/loop-integration`    | Session-scoped cron jobs for monitoring         |
+
+### The Harness Itself
+
+| Skill                  | Description                                                          |
+| ---------------------- | -------------------------------------------------------------------- |
+| `/install-harness`     | Install the harness into a project without prompts and confirm it    |
+| `/debug-harness-hooks` | Find why a hook does not fire, fails, or blocks the wrong thing      |
+| `/upgrade-harness`     | Bring an installed harness up to date without losing local edits     |
 
 ## How Skills Work
 

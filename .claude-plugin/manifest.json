@@ -4,7 +4,7 @@
   "display_name": "claude-harness — Battle-Tested Claude Code Scaffold",
   "description": "Install a battle-tested Claude Code harness (skills + hooks + rules + sub-agents + memory) into any project, query the harness's own knowledge corpus over BM25, and dry-run scaffold plans — same model, 2x output.",
   "version": "1.0.0",
-  "author": "Naman Parikh <naman10parikh@gmail.com>",
+  "author": "Naman Parikh",
   "license": "MIT",
   "repository": "https://github.com/naman10parikh/claude-harness",
   "mcp_servers": [
@@ -20,7 +20,7 @@
   "components": {
     "skills": {
       "path": "skills/",
-      "count": 15,
+      "count": 18,
       "description": "On-demand slash-command workflows the scaffolder installs into .claude/skills/ (self-improve, architect, deep-think, troubleshoot, ...)."
     },
     "hooks": {

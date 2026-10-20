@@ -1,0 +1,28 @@
+{
+  "dsip": "0.1",
+  "product": "claude-harness",
+  "description": "How Claude Harness improves itself. The loop is deterministic: no model, no secret. It proposes; a person merges.",
+  "level": "L2",
+  "level_meaning": "L0 evals exist; L1 evals gate merges in CI; L2 a scheduled loop runs and writes proposals; L3 the loop improves itself. Claude Harness is at L2: .github/workflows/improve.yml runs scripts/improve.mjs daily and writes a proposal, and .github/workflows/test.yml reruns the tests and evals weekly. It is not L3: the loop does not change its own steps.",
+  "levels": ["agent"],
+  "loop": {
+    "cadence": "nightly",
+    "runner": ".github/workflows/improve.yml -> scripts/improve.mjs",
+    "steps": ["review", "extract", "propose", "validate", "ship"],
+    "note": "review runs the golden tasks; extract compares them with eval/baseline.json; propose lists failing tasks and outdated or deprecated dependencies and tries the in-range updates on the CI runner; validate is CI on the pull request; ship is a person merging it."
+  },
+  "selection": "performance",
+  "eval": {
+    "rubric": "eval/run-eval.mjs over eval/golden-tasks.json (22 golden tasks: L1 payload invariants, L2 live scaffolds, L3 the CLI with flags, the MCP server, the plugin hook, the installed blockers, the plugin manifests, memory search) and test/install.test.js (19 tests), run by pnpm test and pnpm run eval",
+    "gate": "all tests and golden tasks pass && evals_passed >= eval/baseline.json",
+    "noSelfGrading": true
+  },
+  "snapback": {
+    "granularity": ["skill", "employee"],
+    "vcs": "git"
+  },
+  "externalIntelligence": {
+    "enabled": false,
+    "source": "none yet; the loop reads only this repository and the package registry"
+  }
+}

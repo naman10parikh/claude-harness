@@ -1,0 +1,36 @@
+{
+  "name": "Harness",
+  "description": "One command installs a tested Claude Code harness: skills, hooks, rules, sub-agents and memory.",
+  "url": "https://github.com/naman10parikh/claude-harness",
+  "version": "1.0.0",
+  "provider": {
+    "organization": "Naman Parikh",
+    "url": "https://github.com/naman10parikh"
+  },
+  "capabilities": {
+    "streaming": false
+  },
+  "defaultInputModes": [
+    "text/plain"
+  ],
+  "defaultOutputModes": [
+    "text/plain"
+  ],
+  "skills": [
+    {
+      "id": "install-harness",
+      "name": "install-harness",
+      "description": "Install the harness into a project without prompts, pick the tier, and confirm it works."
+    },
+    {
+      "id": "debug-harness-hooks",
+      "name": "debug-harness-hooks",
+      "description": "Find why a harness hook does not fire, fails, or blocks the wrong thing, and fix it."
+    },
+    {
+      "id": "upgrade-harness",
+      "name": "upgrade-harness",
+      "description": "Bring a project's installed harness up to the latest claude-harness without losing local edits."
+    }
+  ]
+}

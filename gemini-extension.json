@@ -1,0 +1,17 @@
+{
+  "name": "claude-harness",
+  "version": "1.0.0",
+  "description": "One command installs a tested Claude Code harness: skills, hooks, rules, sub-agents and memory.",
+  "contextFileName": "GEMINI.md",
+  "mcpServers": {
+    "claude-harness": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "-p",
+        "github:naman10parikh/claude-harness",
+        "claude-harness-mcp"
+      ]
+    }
+  }
+}

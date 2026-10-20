@@ -1,0 +1,40 @@
+name: improve
+
+# Claude Harness's self-improvement loop (dsip.json). It runs daily and on demand, needs no secret and
+# only reads the repository: it runs the golden evals, compares them with eval/baseline.json, checks
+# for outdated or deprecated dependencies, tries the in-range updates on this throwaway runner, and
+# writes a proposal to the job summary and an artifact. It never pushes or merges; a person reviews
+# the proposal and merges any change through a pull request.
+
+on:
+  schedule:
+    - cron: "17 8 * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  loop:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 10
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - name: Run the improvement loop
+        run: pnpm improve
+      - name: Show the proposal
+        if: always()
+        run: cat logs/improve/latest.md >> "$GITHUB_STEP_SUMMARY" || true
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: improvement-proposal
+          path: logs/improve/
+          if-no-files-found: ignore

@@ -4,10 +4,10 @@
   "level1_invariants": [
     {
       "id": "L1-skills-count",
-      "desc": "The bundled payload ships exactly 15 skills (one SKILL.md each).",
+      "desc": "The bundled payload ships exactly 18 skills (one SKILL.md each).",
       "check": "skillCount",
       "op": "eq",
-      "expected": 15
+      "expected": 18
     },
     {
       "id": "L1-skills-frontmatter",
@@ -83,12 +83,12 @@
   "level2_scaffold_goldens": [
     {
       "id": "L2-expert-install",
-      "desc": "Installing the expert tier into a clean dir yields the full harness: 15 skills, >=6 hooks, all bundled rules, settings.local.json, memory/, resources/.",
+      "desc": "Installing the expert tier into a clean dir yields the full harness: 18 skills, >=6 hooks, all bundled rules, settings.local.json, memory/, resources/.",
       "tier": "expert",
       "language": "typescript",
       "projectType": "agent-project",
       "expect": {
-        "skillCount": 15,
+        "skillCount": 18,
         "hookCountGte": 6,
         "files": [
           ".claude/settings.local.json",
@@ -118,6 +118,53 @@
         ],
         "absentFiles": ["memory"]
       }
+    }
+  ],
+  "level3_surfaces": [
+    {
+      "id": "L3-cli-init-flags",
+      "desc": "init with --name, --language, --tier and --type installs the pro tier with no prompt and logs one scaffold-install line.",
+      "check": "cliInitNonInteractive"
+    },
+    {
+      "id": "L3-cli-refuses",
+      "desc": "init rejects an unknown tier, and refuses to overwrite an existing harness without --force when no one can answer a prompt.",
+      "check": "cliRefusesBadInput"
+    },
+    {
+      "id": "L3-mcp-tools",
+      "desc": "The MCP server lists exactly its three tools.",
+      "check": "mcpListsTools"
+    },
+    {
+      "id": "L3-mcp-plan-agrees",
+      "desc": "scaffold_plan over MCP reports the same skill counts as install() for all three tiers.",
+      "check": "mcpPlanMatchesInstall"
+    },
+    {
+      "id": "L3-hook-no-git",
+      "desc": "The session-start hook (the plugin's hook) finishes with exit 0 in a folder that is not a git repository.",
+      "check": "hookSurvivesNoGit"
+    },
+    {
+      "id": "L3-blockers-block",
+      "desc": "The inline blockers an install writes really block: given the hook event on stdin, the Bash blocker stops rm -rf / and allows ls, and the pro file blocker stops a write to .env.",
+      "check": "blockersWork"
+    },
+    {
+      "id": "L3-own-skills",
+      "desc": "The three skills written for claude-harness have frontmatter and When to Use, Steps, Example and Output sections.",
+      "check": "ownSkillsComplete"
+    },
+    {
+      "id": "L3-plugin-wired",
+      "desc": "plugin.json, marketplace.json and hooks/hooks.json parse, and every agent and hook script they name exists.",
+      "check": "pluginWired"
+    },
+    {
+      "id": "L3-memory-search",
+      "desc": "memory-search answers a plain question from the docs.",
+      "check": "memorySearchFinds"
     }
   ]
 }

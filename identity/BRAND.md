@@ -9,7 +9,10 @@ words: this is the harness, and the harness is the product.
 
 ## Tagline
 
-> **Battle-tested Claude Code scaffold. Same model, 2x output.**
+> **One command installs a tested Claude Code harness: skills, hooks, rules, sub-agents and memory.**
+>
+> (Earlier tagline: "Battle-tested Claude Code scaffold. Same model, 2x output." The 2x is the
+> thesis from outside research, not a measurement of this harness, so it is no longer the tagline.)
 
 Supporting line: *~1,200 lines of bash and markdown. No daemon. No server. No dependencies beyond
 Claude Code.*

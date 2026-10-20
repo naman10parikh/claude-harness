@@ -13,6 +13,9 @@ Claude Code hooks automate actions on lifecycle events.
 | `stop-verify.sh`              | Stop                   | Quality gate: warns about uncommitted work                 |
 | `session-end-log.sh`          | SessionEnd             | Logs session summary to daily memory                       |
 
+The Claude Code plugin wires `session-start-context.sh` at `SessionStart` through
+[`hooks.json`](hooks.json), so plugin users get the context block without running `init`.
+
 ## Inline Hooks (configured in settings.local.json)
 
 ### Destructive Command Blocker (PreToolUse: Bash)
@@ -35,11 +38,9 @@ Hooks are installed automatically by `claude-harness init`. To install manually:
 
 See the [Claude Code docs](https://docs.anthropic.com/en/docs/claude-code) for hook events and API.
 
-Hook scripts receive context via environment variables:
-
-- `$CLAUDE_PROJECT_DIR` — project root
-- `$CLAUDE_TOOL_NAME` — tool being called (PreToolUse/PostToolUse)
-- `$CLAUDE_TOOL_INPUT` — tool input (PreToolUse/PostToolUse)
+Hook scripts receive the event as JSON on stdin (`tool_name`, `tool_input.command`,
+`tool_input.file_path` and more); read it with `jq` or match it with `grep`. Claude Code also sets
+`$CLAUDE_PROJECT_DIR`, the project root.
 
 Exit codes:
 

@@ -1,10 +1,11 @@
 {
   "name": "claude-harness",
   "version": "1.0.0",
-  "description": "Battle-tested Claude Code scaffold. Same model, 2x output.",
+  "description": "One command installs a tested Claude Code harness: skills, hooks, rules, sub-agents and memory.",
   "type": "module",
   "bin": {
-    "claude-harness": "bin/claude-harness.js"
+    "claude-harness": "bin/claude-harness.js",
+    "claude-harness-mcp": "mcp-server.mjs"
   },
   "files": [
     "bin",
@@ -28,7 +29,8 @@
     "test": "vitest run",
     "test:watch": "vitest",
     "eval": "node eval/run-eval.mjs",
-    "self-test": "node bin/claude-harness.js --help"
+    "self-test": "node bin/claude-harness.js --help",
+    "improve": "node scripts/improve.mjs"
   },
   "keywords": [
     "claude",
@@ -53,7 +55,7 @@
   "devDependencies": {
     "vitest": "^3.2.4"
   },
-  "author": "Naman Parikh <naman10parikh@gmail.com>",
+  "author": "Naman Parikh",
   "license": "MIT",
   "homepage": "https://github.com/naman10parikh/claude-harness#readme",
   "bugs": {

@@ -1,0 +1,17 @@
+{
+  "name": "claude-harness",
+  "owner": {
+    "name": "Naman Parikh",
+    "url": "https://github.com/naman10parikh"
+  },
+  "plugins": [
+    {
+      "name": "harness",
+      "source": "./",
+      "description": "One command installs a tested Claude Code harness: skills, hooks, rules, sub-agents and memory."
+    }
+  ],
+  "metadata": {
+    "description": "One command installs a tested Claude Code harness: skills, hooks, rules, sub-agents and memory."
+  }
+}

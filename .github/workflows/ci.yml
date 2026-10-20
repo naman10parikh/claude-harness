@@ -31,7 +31,7 @@ jobs:
           echo "=== Checking skills ==="
           SKILL_COUNT=$(find skills -name "SKILL.md" -type f | wc -l | tr -d ' ')
           echo "Found $SKILL_COUNT skills"
-          test "$SKILL_COUNT" -eq 15 || (echo "FAIL: Expected 15 skills, found $SKILL_COUNT" && exit 1)
+          test "$SKILL_COUNT" -eq 18 || (echo "FAIL: Expected 18 skills, found $SKILL_COUNT" && exit 1)
           # Check each skill has frontmatter
           for skill in skills/*/SKILL.md; do
             if ! head -1 "$skill" | grep -q "^---"; then
@@ -62,7 +62,7 @@ jobs:
           LEAKS=0
           # Internal-reference patterns. Word-boundary aware so harness vocabulary
           # like LEARNINGS.md is not falsely matched by "earning".
-          for pattern in "energy/" "@energy" "/Users/naman" "\bnaman\b" "\bearning\b" "fleet-state" "\bchairman\b"; do
+          for pattern in "energy/" "@energy" "/Users/[n]aman" "\bnaman\b" "\bearning\b" "fleet-state" "\bchairman\b"; do
             FOUND=$(grep -rIniE "$pattern" skills/ hooks/ rules/ templates/ scripts/ bin/ examples/ 2>/dev/null || true)
             if [ -n "$FOUND" ]; then
               echo "LEAK: Found '$pattern' in:"
