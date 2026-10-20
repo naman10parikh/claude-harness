@@ -1,0 +1,56 @@
+name: Skill submission
+description: Submit a new skill for inclusion in claude-harness.
+title: "[Skill] "
+labels: [skill]
+body:
+  - type: input
+    id: name
+    attributes:
+      label: Skill name
+      placeholder: /my-skill-name
+    validations:
+      required: true
+  - type: input
+    id: description
+    attributes:
+      label: Description
+      description: One line, under 100 characters.
+    validations:
+      required: true
+  - type: textarea
+    id: when
+    attributes:
+      label: When to use
+      placeholder: |
+        - Trigger condition 1
+        - Trigger condition 2
+  - type: textarea
+    id: skill
+    attributes:
+      label: The skill (SKILL.md content)
+      render: markdown
+      value: |
+        ---
+        name: my-skill-name
+        description: One-line description
+        ---
+
+        ## When to Use
+
+        - ...
+
+        ## Process
+
+        ### Step 1: ...
+    validations:
+      required: true
+  - type: textarea
+    id: why
+    attributes:
+      label: Why this should be included
+      description: What problem does this solve? How many sessions does it save time in?
+  - type: textarea
+    id: testing
+    attributes:
+      label: Testing
+      description: How did you test this skill? How many sessions have you used it across?

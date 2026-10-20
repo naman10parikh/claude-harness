@@ -1,0 +1,58 @@
+name: Bug report
+description: Something isn't working as expected.
+title: "[Bug] "
+labels: [bug]
+body:
+  - type: textarea
+    id: bug
+    attributes:
+      label: Describe the bug
+      description: A clear, concise description of what the bug is.
+    validations:
+      required: true
+  - type: input
+    id: os
+    attributes:
+      label: OS
+      placeholder: macOS 15.2, Ubuntu 24.04
+  - type: input
+    id: claude-version
+    attributes:
+      label: Claude Code version
+      description: Run `claude --version`.
+  - type: input
+    id: harness-version
+    attributes:
+      label: claude-harness version
+      description: Check `package.json`.
+  - type: dropdown
+    id: shell
+    attributes:
+      label: Shell
+      options: [bash, zsh, Other]
+  - type: textarea
+    id: steps
+    attributes:
+      label: To reproduce
+      placeholder: |
+        1. Run `...`
+        2. Edit `...`
+        3. See error
+  - type: textarea
+    id: expected
+    attributes:
+      label: Expected behavior
+  - type: textarea
+    id: actual
+    attributes:
+      label: Actual behavior
+      description: What actually happened. Include error output if available.
+  - type: textarea
+    id: output
+    attributes:
+      label: Relevant hook or script output
+      render: shell
+  - type: textarea
+    id: context
+    attributes:
+      label: Additional context
