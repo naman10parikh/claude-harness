@@ -23,7 +23,7 @@ export const HARNESS_ROOT = resolve(__dirname, "..");
 export const TIERS = {
   starter: {
     label: "Starter",
-    description: "CLAUDE.md + 2 rules + 1 skill + session hook",
+    description: "CLAUDE.md + 2 rules + 2 skills + 2 hooks",
     skills: ["troubleshoot", "validate"],
     hooks: ["session-start-context.sh", "stop-verify.sh"],
     rules: ["code-quality.md"],
