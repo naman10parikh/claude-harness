@@ -9,7 +9,7 @@
 `claude-harness` copies a tested Claude Code setup into any project: skills, lifecycle hooks (context
 at session start, a memory flush before compaction, a check before stopping), rules, sub-agents,
 settings and a `memory/` folder. It comes in three tiers: `starter` (2 skills, 2 hooks), `pro` (5
-skills, 4 hooks, memory) and `expert` (everything). The idea behind it: the same model does better
+skills, 6 hooks, memory) and `expert` (everything). The idea behind it: the same model does better
 work inside a better harness, so the harness is the product.
 
 ## Two surfaces: never edit one when you mean the other
@@ -66,7 +66,7 @@ live in `agents/`. They read and report; the parent edits.
 | `mcp-server.mjs` | The MCP server. |
 | `lib/` | Memory search, the run log, the E2B sandbox runner, a small `.env` loader. |
 | `skills/`, `hooks/`, `rules/`, `agents/`, `templates/`, `examples/`, `scripts/`, `docs/` | The payload. `hooks/hooks.json` wires the plugin's session-start hook. |
-| `test/`, `eval/` | 19 unit tests and 22 golden tasks (L1 payload invariants, L2 live scaffolds, L3 surfaces). |
+| `test/`, `eval/` | 19 unit tests and 23 golden tasks (L1 payload invariants, L2 live scaffolds, L3 surfaces). |
 | `identity/`, `memory/`, `brain/` | SOUL, BRAND, HEARTBEAT and MEMORY; long-term memory and append-only LEARNINGS; the Obsidian brain. |
 | `.claude/` | This repository's own harness: rules, skills, hooks, agents, settings. |
 | `.claude-plugin/`, `gemini-extension.json`, `.well-known/agent-card.json` | Claude Code plugin (named `harness`), Gemini CLI extension, A2A agent card. |
@@ -77,7 +77,7 @@ live in `agents/`. They read and report; the parent edits.
 ```bash
 pnpm install          # Node >= 18; no build step
 pnpm test             # 19 unit tests of the installer
-pnpm run eval         # 22 golden tasks
+pnpm run eval         # 23 golden tasks
 pnpm improve          # the self-improvement loop; writes logs/improve/latest.md
 node bin/claude-harness.js init /tmp/try --name try --language general --tier starter --type cli-tool
 ```

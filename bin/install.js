@@ -33,7 +33,7 @@ export const TIERS = {
   },
   pro: {
     label: "Pro",
-    description: "5 skills + 4 hooks + memory + scripts",
+    description: "5 skills + 6 hooks + memory + scripts",
     skills: [
       "troubleshoot",
       "validate",
@@ -41,8 +41,11 @@ export const TIERS = {
       "architect",
       "self-improve",
     ],
+    // Every hook that templates/settings.local.json names, so no setting points at a missing file.
     hooks: [
       "session-start-context.sh",
+      "context-monitor.sh",
+      "post-compact-restore.sh",
       "stop-verify.sh",
       "pre-compact-memory-flush.sh",
       "session-end-log.sh",

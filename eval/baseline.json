@@ -1,4 +1,4 @@
 {
-  "evals_passed": 22,
+  "evals_passed": 23,
   "note": "Accepted pass count for pnpm run eval (eval/run-eval.mjs: L1 invariants, L2 live scaffolds, L3 surfaces). The improvement loop fails below it."
 }

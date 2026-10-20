@@ -83,13 +83,14 @@
   "level2_scaffold_goldens": [
     {
       "id": "L2-expert-install",
-      "desc": "Installing the expert tier into a clean dir yields the full harness: 18 skills, >=6 hooks, all bundled rules, settings.local.json, memory/, resources/.",
+      "desc": "Installing the expert tier into a clean dir yields the full harness: 18 skills, >=6 hooks, all bundled rules, settings.local.json, memory/, resources/. Every hook script its settings name exists and is executable.",
       "tier": "expert",
       "language": "typescript",
       "projectType": "agent-project",
       "expect": {
         "skillCount": 18,
         "hookCountGte": 6,
+        "settingsHooksExist": true,
         "files": [
           ".claude/settings.local.json",
           ".claude/skills/self-improve/SKILL.md",
@@ -102,14 +103,36 @@
       }
     },
     {
+      "id": "L2-pro-install",
+      "desc": "Installing the pro tier yields 5 skills, 6 hooks, memory/ and both scripts, and every hook script its settings name exists and is executable (the pro settings once named two scripts the installer never copied).",
+      "tier": "pro",
+      "language": "typescript",
+      "projectType": "web-app",
+      "expect": {
+        "skillCount": 5,
+        "hookCountGte": 6,
+        "settingsHooksExist": true,
+        "files": [
+          ".claude/settings.local.json",
+          ".claude/hooks/context-monitor.sh",
+          ".claude/hooks/post-compact-restore.sh",
+          "memory/MEMORY.md",
+          "scripts/auto-switch.sh",
+          "CLAUDE.md"
+        ],
+        "absentFiles": ["resources"]
+      }
+    },
+    {
       "id": "L2-starter-install",
-      "desc": "Installing the starter tier yields a minimal harness: 2 skills, 2 hooks, no memory/.",
+      "desc": "Installing the starter tier yields a minimal harness: 2 skills, 2 hooks, no memory/. Every hook script its settings name exists and is executable.",
       "tier": "starter",
       "language": "typescript",
       "projectType": "web-app",
       "expect": {
         "skillCount": 2,
         "hookCountGte": 2,
+        "settingsHooksExist": true,
         "files": [
           ".claude/skills/troubleshoot/SKILL.md",
           ".claude/skills/validate/SKILL.md",

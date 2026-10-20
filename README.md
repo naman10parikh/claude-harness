@@ -95,7 +95,7 @@ It needs Node.js 18 or later, git and bash. From your project folder:
 
 ```bash
 npx -y -p github:naman10parikh/claude-harness claude-harness init --name shop --language typescript --tier pro --type web-app
-#   5 skills, 4 hooks, 3 rules, memory, 2 scripts
+#   5 skills, 6 hooks, 3 rules, memory, 2 scripts
 bash scripts/verify.sh
 #   All checks passed. Your harness is ready.
 claude
@@ -110,7 +110,7 @@ machine, `claude-harness sandbox-run --tier pro` installs it inside an E2B micro
 | Tier | What it installs |
 | --- | --- |
 | `starter` | 2 skills, 2 hooks, the code-quality rule plus one for your language, the Bash blocker, `scripts/verify.sh` |
-| `pro` | 5 skills, 4 hooks (context, stop check, pre-compaction flush, session log), 2 rules plus your language's, memory, both blockers, `verify.sh` and `auto-switch.sh` |
+| `pro` | 5 skills, 6 hooks (context, context monitor, stop check, pre-compaction flush, post-compaction restore, session log), 2 rules plus your language's, memory, both blockers, `verify.sh` and `auto-switch.sh` |
 | `expert` | Everything: 18 skills, 6 hooks, 7 rules, memory, `resources/` folders, both scripts |
 
 ## How it works
@@ -211,7 +211,7 @@ Each reads its event as JSON on stdin.
 ```bash
 pnpm install          # no build step
 pnpm test             # 19 unit tests of the installer
-pnpm run eval         # 22 golden tasks: payload invariants, live installs, the CLI, MCP server, hooks
+pnpm run eval         # 23 golden tasks: payload invariants, live installs, the CLI, MCP server, hooks
 pnpm improve          # the self-improvement loop; writes logs/improve/latest.md
 ```
 

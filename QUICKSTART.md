@@ -26,7 +26,7 @@ git clone https://github.com/naman10parikh/claude-harness.git
 cd claude-harness
 pnpm install                      # no build step
 pnpm test                         # 19 tests in test/install.test.js
-pnpm run eval                     # 22 golden tasks
+pnpm run eval                     # 23 golden tasks
 node bin/claude-harness.js --help
 ```
 

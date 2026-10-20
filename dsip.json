@@ -13,7 +13,7 @@
   },
   "selection": "performance",
   "eval": {
-    "rubric": "eval/run-eval.mjs over eval/golden-tasks.json (22 golden tasks: L1 payload invariants, L2 live scaffolds, L3 the CLI with flags, the MCP server, the plugin hook, the installed blockers, the plugin manifests, memory search) and test/install.test.js (19 tests), run by pnpm test and pnpm run eval",
+    "rubric": "eval/run-eval.mjs over eval/golden-tasks.json (23 golden tasks: L1 payload invariants, L2 live scaffolds, L3 the CLI with flags, the MCP server, the plugin hook, the installed blockers, the plugin manifests, memory search) and test/install.test.js (19 tests), run by pnpm test and pnpm run eval",
     "gate": "all tests and golden tasks pass && evals_passed >= eval/baseline.json",
     "noSelfGrading": true
   },

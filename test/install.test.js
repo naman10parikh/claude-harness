@@ -91,9 +91,17 @@ describe("pro tier", () => {
     });
 
     expect(result.skillCount).toBe(5);
-    expect(result.hookCount).toBe(4);
+    expect(result.hookCount).toBe(6);
     expect(result.ruleCount).toBe(3); // code-quality + docs + python
     expect(result.scriptCount).toBe(2);
+
+    // The two hooks pro settings name besides the other four
+    expect(existsSync(join(tmpDir, ".claude/hooks/context-monitor.sh"))).toBe(
+      true,
+    );
+    expect(
+      existsSync(join(tmpDir, ".claude/hooks/post-compact-restore.sh")),
+    ).toBe(true);
 
     // Has memory
     expect(existsSync(join(tmpDir, "memory/MEMORY.md"))).toBe(true);

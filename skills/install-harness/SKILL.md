@@ -38,7 +38,7 @@ Request: "Set up the harness in this Next.js repository."
 
 1. Tier `pro`, language `typescript`, type `web-app`.
 2. `claude-harness init --name shop --language typescript --tier pro --type web-app` installs 5
-   skills, 4 hooks, 3 rules, memory and 2 scripts.
+   skills, 6 hooks, 3 rules, memory and 2 scripts.
 3. `bash scripts/verify.sh` passes; CLAUDE.md now names the stack and the test command.
 
 ## Output

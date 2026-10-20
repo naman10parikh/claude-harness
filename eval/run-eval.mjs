@@ -116,6 +116,25 @@ for (const task of spec.level1_invariants) {
   record(task.id, ok, `${task.check}=${JSON.stringify(actual)} (${task.op} ${JSON.stringify(task.expected)})`);
 }
 
+// Every path in the installed settings.local.json hook commands must be an executable file in the project.
+// Returns [problems, count of paths checked].
+function settingsHookProblems(projectDir) {
+  const settings = JSON.parse(readFileSync(join(projectDir, ".claude", "settings.local.json"), "utf-8"));
+  const problems = [];
+  let count = 0;
+  for (const entries of Object.values(settings.hooks ?? {}))
+    for (const entry of entries)
+      for (const hook of entry.hooks ?? [])
+        for (const path of (hook.command ?? "").split(/\s+/).filter((t) => t.startsWith(projectDir))) {
+          count++;
+          const rel = path.slice(projectDir.length + 1);
+          if (!existsSync(path)) problems.push(`settings name a missing ${rel}`);
+          else if (!(statSync(path).mode & 0o100)) problems.push(`settings name a non-executable ${rel}`);
+        }
+  if (count === 0) problems.push("settings name no hook script");
+  return [problems, count];
+}
+
 // ─── L2: live scaffold goldens ───
 console.log("\n=== L2 — live scaffold goldens ===");
 for (const task of spec.level2_scaffold_goldens) {
@@ -144,12 +163,18 @@ for (const task of spec.level2_scaffold_goldens) {
       if (existsSync(join(tmp, rel))) problems.push(`should be absent: ${rel}`);
     for (const rel of e.noJunk || [])
       if (existsSync(join(tmp, rel))) problems.push(`junk leaked: ${rel}`);
+    let hookPaths = 0;
+    if (e.settingsHooksExist) {
+      const [hookProblems, count] = settingsHookProblems(tmp);
+      problems.push(...hookProblems);
+      hookPaths = count;
+    }
 
     record(
       task.id,
       problems.length === 0,
       problems.length === 0
-        ? `${task.tier} tier scaffolded clean`
+        ? `${task.tier} tier scaffolded clean${hookPaths ? `; all ${hookPaths} hook paths in its settings exist` : ""}`
         : problems.join("; "),
     );
   } catch (err) {
