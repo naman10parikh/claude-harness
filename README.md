@@ -1,390 +1,246 @@
-<h1 align="center">
-  claude-harness
-</h1>
+# Claude Harness
 
-<p align="center">
-  <strong>Battle-tested Claude Code scaffold. Same model, 2x output.</strong>
-</p>
+<!-- fleet:header:start -->
+[![CI](https://img.shields.io/github/actions/workflow/status/naman10parikh/claude-harness/ci.yml?branch=main&style=flat-square&label=ci)](https://github.com/naman10parikh/claude-harness/actions) [![License: MIT](https://img.shields.io/badge/license-MIT-green?style=flat-square)](LICENSE) [![Agent-native](https://img.shields.io/badge/agent--native-yes-2f5d8a?style=flat-square)](AGENTS.md) [![MCP server](https://img.shields.io/badge/MCP-server-1e3f60?style=flat-square)](#use-it-from-any-coding-agent) [![Skills](https://img.shields.io/badge/skills-3-2f6b4f?style=flat-square)](skills/) [![Stars](https://img.shields.io/github/stars/naman10parikh/claude-harness?style=flat-square)](https://github.com/naman10parikh/claude-harness/stargazers)
 
-<p align="center">
-  <a href="https://github.com/naman10parikh/claude-harness/stargazers"><img src="https://img.shields.io/github/stars/naman10parikh/claude-harness?style=flat&color=yellow" alt="Stars"></a>
-  <a href="https://www.npmjs.com/package/claude-harness"><img src="https://img.shields.io/npm/v/claude-harness?color=blue" alt="npm version"></a>
-  <a href="https://www.npmjs.com/package/claude-harness"><img src="https://img.shields.io/npm/dm/claude-harness?color=green" alt="Downloads"></a>
-  <a href="https://github.com/naman10parikh/claude-harness/blob/main/LICENSE"><img src="https://img.shields.io/github/license/naman10parikh/claude-harness" alt="License"></a>
-  <a href="https://github.com/naman10parikh/claude-harness/actions"><img src="https://img.shields.io/github/actions/workflow/status/naman10parikh/claude-harness/ci.yml?branch=main" alt="CI"></a>
-  <a href="https://github.com/naman10parikh/claude-harness/pulls"><img src="https://img.shields.io/badge/PRs-welcome-brightgreen" alt="PRs Welcome"></a>
-</p>
+**One command installs a tested Claude Code harness: skills, hooks, rules, sub-agents and memory.**
 
-<p align="center">
-  ~1,200 lines of bash and markdown. No daemon. No server. No dependencies beyond Claude Code.<br>
-  <sub>15 skills &middot; 8 hooks &middot; 3 rules &middot; 3 templates &middot; 3 example configs &middot; CI included</sub>
-</p>
+Harness is an agent-native, recursively self-improving agent employee whose job is the whole harness, as a template. Coding agents use it through its skills, its MCP server and its command line. It improves itself through its own evals and a scheduled improvement loop, and a person reviews every change.
 
----
+[AGENTS.md](AGENTS.md) · [llms.txt](llms.txt) · [Skills](skills/) · [Security](SECURITY.md) · [Contributing](CONTRIBUTING.md) · [All projects](https://github.com/naman10parikh)
+<!-- fleet:header:end -->
 
-> **The thesis:** The same model with a different scaffold produces dramatically different results. Jeff Clune's [Darwin Godel Machine](https://arxiv.org/abs/2505.22954) achieved 20% to 50% on SWE-bench by improving the scaffold alone — same model, same weights. Anthropic's own harness engineering shows [10-22 point improvements](https://www.anthropic.com/engineering/swe-bench-sonnet) from scaffold changes. **The harness IS the product.**
+claude-harness copies a tested Claude Code setup into any project: skills, lifecycle hooks, rules,
+sub-agents, settings and a memory folder. The next session starts with the project's context loaded,
+dangerous commands blocked, and notes that survive context compaction. It comes in three tiers,
+installs with one command, and an agent can run it without prompts.
 
----
+<!-- fleet:use:start -->
+## Use it from any coding agent
 
-## Contents
+**Claude Code**: the plugin brings the skills, sub-agents, hooks and MCP server.
 
-- [Quick Start](#quick-start)
-- [Why This Exists](#why-this-exists)
-- [What's Inside](#whats-inside)
-- [How It Works](#how-it-works)
-- [Before and After](#before-and-after)
-- [Skills](#skills) — 15 on-demand workflows
-  - [Meta (Self-Improvement)](#meta-self-improvement)
-  - [Planning & Architecture](#planning--architecture)
-  - [Operations](#operations)
-- [Hooks](#hooks) — 6 scripts + 2 inline blockers
-- [Rules](#rules) — 3 auto-loading rule files
-- [Memory System](#memory-system) — Three-tier compaction survival
-- [Auto-Switch](#auto-switch) — Autonomous session management
-- [Project Structure](#project-structure)
-- [Examples](#examples)
-- [Docs](#docs)
-- [The Self-Improvement Part](#the-self-improvement-part)
-- [Contributing](#contributing)
-- [License](#license)
-
----
-
-## Quick Start
-
-```bash
-npx claude-harness init
+```
+/plugin marketplace add naman10parikh/claude-harness
+/plugin install harness@claude-harness
 ```
 
-Asks your project type (web app, CLI tool, agent project). Copies a tuned `.claude/` directory into your repo. **60 seconds.**
+**Its MCP server**, in any MCP client:
 
 ```bash
-claude   # Hooks activate automatically. Context loads. Memory persists.
+claude mcp add --transport stdio claude-harness -- npx -y -p github:naman10parikh/claude-harness claude-harness-mcp
+codex mcp add claude-harness -- npx -y -p github:naman10parikh/claude-harness claude-harness-mcp
 ```
 
-Verify your setup:
+Cursor (`.cursor/mcp.json`), Gemini CLI (`.gemini/settings.json`) and most other clients take the same command as JSON:
+
+```json
+{
+  "mcpServers": {
+    "claude-harness": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "-p",
+        "github:naman10parikh/claude-harness",
+        "claude-harness-mcp"
+      ]
+    }
+  }
+}
+```
+
+**Gemini CLI**: the extension brings the context and the MCP server.
 
 ```bash
+gemini extensions install https://github.com/naman10parikh/claude-harness
+```
+
+**One skill** (3 in all, in [skills/](skills/)), in any agent that reads Agent Skills:
+
+```bash
+gemini skills install https://github.com/naman10parikh/claude-harness --path skills/install-harness
+git clone --depth 1 https://github.com/naman10parikh/claude-harness /tmp/claude-harness && cp -r /tmp/claude-harness/skills/install-harness ~/.claude/skills/
+```
+
+**The command line:**
+
+```bash
+npx -y -p github:naman10parikh/claude-harness claude-harness --help
+```
+
+Codex, Cursor, OpenCode, GitHub Copilot and other agents read [AGENTS.md](AGENTS.md); Claude Code reads [CLAUDE.md](CLAUDE.md) and Gemini CLI reads [GEMINI.md](GEMINI.md), which import it. [llms.txt](llms.txt) maps every surface for agents that read first.
+<!-- fleet:use:end -->
+
+## Quick start
+
+It needs Node.js 18 or later, git and bash. From your project folder:
+
+```bash
+npx -y -p github:naman10parikh/claude-harness claude-harness init --name shop --language typescript --tier pro --type web-app
+#   5 skills, 4 hooks, 3 rules, memory, 2 scripts
 bash scripts/verify.sh
+#   All checks passed. Your harness is ready.
+claude
+#   === SESSION CONTEXT === ... === READY ===
 ```
 
-**Requirements:** Claude Code CLI, git, bash. macOS and Linux.
+Leave out the flags and `init` asks the four questions instead. `npx claude-harness init` runs the npm
+release 1.0.0 from March 2026, which is older than this repository. To try it without touching your
+machine, `claude-harness sandbox-run --tier pro` installs it inside an E2B microVM first (needs
+`E2B_API_KEY`).
 
----
+| Tier | What it installs |
+| --- | --- |
+| `starter` | 2 skills, 2 hooks, the code-quality rule plus one for your language, the Bash blocker, `scripts/verify.sh` |
+| `pro` | 5 skills, 4 hooks (context, stop check, pre-compaction flush, session log), 2 rules plus your language's, memory, both blockers, `verify.sh` and `auto-switch.sh` |
+| `expert` | Everything: 18 skills, 6 hooks, 7 rules, memory, `resources/` folders, both scripts |
 
-## Why This Exists
+## How it works
 
-Claude Code users spend ~20% of every session re-establishing context. Architecture, coding standards, past debugging decisions — all lost to compaction.
+The idea behind it: the same model does better work inside a better harness. The Darwin Gödel
+Machine went from 20% to 50% on SWE-bench by improving its scaffold alone, with the same weights
+([paper](https://arxiv.org/abs/2505.22954)), and Anthropic reports
+[10 to 22 point gains](https://www.anthropic.com/engineering/swe-bench-sonnet) from scaffold changes.
+claude-harness packages one such scaffold, built over 100+ sessions, so you do not start from zero.
 
-**claude-harness** is 100+ sessions of those scattered improvements packaged into something anyone can install in 60 seconds.
-
----
-
-## What's Inside
-
-| Component     | Count                | What You Get                                                    |
-| ------------- | -------------------- | --------------------------------------------------------------- |
-| **Skills**    | 15                   | On-demand workflows (~70 tokens each at startup)                |
-| **Hooks**     | 6 scripts + 2 inline | Lifecycle automation (context load, memory flush, quality gate) |
-| **Rules**     | 3                    | Auto-loading context for TypeScript, code quality, docs         |
-| **Templates** | 3                    | CLAUDE.md, MEMORY.md, LEARNINGS.md starting points              |
-| **Scripts**   | 2                    | Setup verification + autonomous session management              |
-| **Examples**  | 3                    | Per-project-type configs (web app, CLI, agent)                  |
-
----
-
-## How It Works
-
-### The Core Loop
+### The core loop
 
 ```
 Session starts ──► SessionStart hook injects context, memory, learnings, git status
        │
        ▼
-   You work ──► Rules auto-load when you edit matching files (.ts → TypeScript rules)
+   You work ──► Rules load when you edit matching files (.ts → TypeScript rules)
        │
        ▼
- Context fills ──► PreCompact hook saves anchor state + backup to disk
+ Context fills ──► PreCompact hook saves the anchor state and a backup to disk
        │
        ▼
-After compaction ──► PostCompact hook re-injects what was saved
+After compaction ──► the compact-matcher SessionStart hook re-injects what was saved
        │
        ▼
- Session ends ──► SessionEnd hook writes summary; Stop hook warns about uncommitted work
+ Session ends ──► SessionEnd hook writes a summary; the Stop hook warns about uncommitted work
        │
        ▼
- Next session ──► SessionStart reads yesterday's summary. Continuity without effort.
+ Next session ──► SessionStart reads yesterday's summary
 ```
 
-### The Feature That Changed Everything
+The pre-compaction flush matters most. Claude Code fires `PreCompact` just before it compresses the
+conversation, and a short bash script saves the active task and recent files to
+`.claude/anchor-state.md`. After compaction, the session-start hook reads it back in.
 
-The pre-compact memory flush. Claude Code fires a `PreCompact` hook right before compressing your context. A 30-line bash script running at that exact moment saves whatever you need to disk:
+### Before and after
+
+| | Without the harness | With the harness |
+| --- | --- | --- |
+| **Monday morning** | Re-explain the architecture, standards and recent work | The session loads them |
+| **After compaction** | Context lost; solved bugs debugged again | Memory flushed before compaction and restored after |
+| **The same bug twice** | Fixed again from scratch | LEARNINGS.md is read first |
+| **Forgot to commit** | Found out later | The Stop hook warns before the session ends |
+| **A destructive command** | It runs | The PreToolUse blocker stops it (exit 2) |
+| **A new teammate** | A long walkthrough | Clone the repository; the context loads |
+
+### Skills (18)
+
+On-demand workflows, about 70 tokens each at start-up. Full list: [docs/SKILLS.md](docs/SKILLS.md).
+
+| Group | Skills |
+| --- | --- |
+| Self-improvement | [`self-improve`](skills/self-improve/SKILL.md), [`deep-think`](skills/deep-think/SKILL.md), [`skill-creator`](skills/skill-creator/SKILL.md), [`harness-review`](skills/harness-review/SKILL.md), [`skill-routing`](skills/skill-routing/SKILL.md) |
+| Planning | [`architect`](skills/architect/SKILL.md), [`sprint`](skills/sprint/SKILL.md), [`model-routing`](skills/model-routing/SKILL.md) |
+| Operations | [`troubleshoot`](skills/troubleshoot/SKILL.md), [`validate`](skills/validate/SKILL.md), [`recover`](skills/recover/SKILL.md), [`handoff`](skills/handoff/SKILL.md), [`memory-compression`](skills/memory-compression/SKILL.md), [`integrate-resources`](skills/integrate-resources/SKILL.md), [`loop-integration`](skills/loop-integration/SKILL.md) |
+| The harness itself | [`install-harness`](skills/install-harness/SKILL.md), [`debug-harness-hooks`](skills/debug-harness-hooks/SKILL.md), [`upgrade-harness`](skills/upgrade-harness/SKILL.md) |
+
+### Hooks
+
+Six scripts in [`hooks/`](hooks/) plus two inline blockers, wired in `.claude/settings.local.json`.
+Each reads its event as JSON on stdin.
+
+| Hook | Event | What it does |
+| --- | --- | --- |
+| [`session-start-context.sh`](hooks/session-start-context.sh) | SessionStart | Loads CLAUDE.md state, memory, learnings, git status and the skills inventory |
+| [`context-monitor.sh`](hooks/context-monitor.sh) | SessionStart | Flags stale plans, memory bloat and uncommitted work |
+| [`pre-compact-memory-flush.sh`](hooks/pre-compact-memory-flush.sh) | PreCompact | Saves the anchor state and a backup |
+| [`post-compact-restore.sh`](hooks/post-compact-restore.sh) | SessionStart (compact) | Re-injects context after compaction |
+| [`stop-verify.sh`](hooks/stop-verify.sh) | Stop | Warns about uncommitted work |
+| [`session-end-log.sh`](hooks/session-end-log.sh) | SessionEnd | Logs a session summary to daily memory |
+| Destructive-command blocker | PreToolUse: Bash | Blocks `rm -rf /`, `sudo rm -rf`, `mkfs`, `dd if=/dev` and the like |
+| Protected-file blocker (pro, expert) | PreToolUse: Write, Edit | Blocks edits to lockfiles and `.env` files |
+
+### Rules, memory and auto-switch
+
+- **Rules:** 7 files in [`rules/`](rules/) that load by file type (TypeScript, code quality, docs,
+  React, design and more).
+- **Memory:** CLAUDE.md and `memory/MEMORY.md` load every session; skills and rules load on demand;
+  `.claude/anchor-state.md`, `.claude/backups/`, `memory/daily/` and `memory/LEARNINGS.md` carry the
+  state across compactions. See [docs/MEMORY-SYSTEM.md](docs/MEMORY-SYSTEM.md).
+- **Auto-switch:** `scripts/auto-switch.sh` runs Claude Code in a loop and starts a fresh session when
+  the context degrades (`--overnight` for unattended runs). See [docs/AUTO-SWITCH.md](docs/AUTO-SWITCH.md).
+
+### What else is in the repository
+
+- `bin/`: the CLI (`init`, `verify`, `sandbox-run`, `memory-search`) and the installer.
+- `templates/`, `examples/`: the settings, CLAUDE.md and memory templates, and a CLAUDE.md example per
+  project type (web app, CLI tool, agent project).
+- `mcp-server.mjs`: an MCP server with `list_tiers`, `scaffold_plan` (a dry run of an install) and
+  `memory_search`.
+- `docs/`: [HOOKS.md](docs/HOOKS.md), [SKILLS.md](docs/SKILLS.md),
+  [MEMORY-SYSTEM.md](docs/MEMORY-SYSTEM.md), [AUTO-SWITCH.md](docs/AUTO-SWITCH.md) and the guides.
+- `.claude/`, `identity/`, `memory/`, `brain/`: this repository's own harness. [AGENTS.md](AGENTS.md)
+  explains the two surfaces.
+
+## Development
 
 ```bash
-#!/bin/bash
-set -euo pipefail
-PROJECT_DIR="${CLAUDE_PROJECT_DIR:-$(pwd)}"
-DAILY_FILE="$PROJECT_DIR/memory/daily/$(date '+%Y-%m-%d').md"
-mkdir -p "$(dirname "$DAILY_FILE")"
-
-echo "### $(date '+%H:%M') -- Pre-compaction flush" >> "$DAILY_FILE"
-cat > "$PROJECT_DIR/.claude/anchor-state.md" << EOF
-Active task: $(cat "$PROJECT_DIR/.claude/current-task.md" 2>/dev/null || echo "none")
-Recent files: $(git -C "$PROJECT_DIR" diff --name-only HEAD~3 2>/dev/null | head -10)
-EOF
+pnpm install          # no build step
+pnpm test             # 19 unit tests of the installer
+pnpm run eval         # 22 golden tasks: payload invariants, live installs, the CLI, MCP server, hooks
+pnpm improve          # the self-improvement loop; writes logs/improve/latest.md
 ```
 
-Then `SessionStart` reads `anchor-state.md` back in after compaction. Context survives what would otherwise be permanent amnesia.
+<!-- fleet:anatomy:start -->
+## What it is made of
 
----
+Every project in this fleet is graded on the same 11 harness components and on self-improvement. Each mark is backed by a file you can open.
 
-## Before and After
+| Component | Grade | Where |
+| --- | --- | --- |
+| Identity | ✅ | identity/SOUL.md:8 (name Harness, tagline), :30 (boundaries); identity/BRAND.md:10; identity/HEARTBEAT.md:1 |
+| Memory | ✅ | memory/MEMORY.md:1; lib/memory-search.mjs:145 (BM25, `claude-harness memory-search`); memory/LEARNINGS.md |
+| Skills | ✅ | skills/install-harness/SKILL.md:1 (+2 more written for it; 15 shipped harness skills) |
+| Tools/CLIs | ✅ | package.json:7-8 (claude-harness, claude-harness-mcp); bin/claude-harness.js:301 (init flags) |
+| Hooks | ✅ | .claude/settings.json:7-68 (6 events); hooks/hooks.json:4; hooks/session-start-context.sh:1; templates/settings.local.json (blockers read stdin) |
+| Sub-agents | ✅ | .claude/agents/harness-auditor.md:1; .claude/agents/payload-reviewer.md:1 |
+| MCPs | ✅ | mcp-server.mjs:118 (3 tools); .mcp.json:3 |
+| Dispatch | ✅ | scripts/improve.mjs:1 (review, extract, propose, try); .github/workflows/improve.yml:10-12 (daily); .github/workflows/test.yml:16 (weekly) |
+| Evals | ✅ | eval/run-eval.mjs:292 (L1, L2, L3: 22 golden tasks); test/install.test.js (19); .github/workflows/test.yml:38-41 |
+| Observability | ✅ | lib/run-log.mjs:30 (logs/runs.jsonl); bin/install.js:397 (every install); lib/sandbox-run.mjs:138 |
+| Sandbox/Infra | ✅ | lib/sandbox-run.mjs:107 (E2B Sandbox.create) |
+| RSI / open-endedness | ✅ | dsip.json:5 (L2); scripts/improve.mjs:1 |
 
-|                         | Before (Raw Claude Code)                        | After (With Harness)                          |
-| ----------------------- | ----------------------------------------------- | --------------------------------------------- |
-| **Monday morning**      | Re-explain architecture, standards, recent work | Session loads everything automatically        |
-| **After compaction**    | Lost context, re-debug solved issues            | Memory flushed pre-compaction, restored after |
-| **Same bug twice**      | Fix it again from scratch                       | LEARNINGS.md consulted first — fix referenced |
-| **Forgot to commit**    | Discover at 2am, scramble                       | Stop hook warns before exit                   |
-| **rm -rf accident**     | Panic                                           | PreToolUse hook blocks it                     |
-| **New team member**     | 2-hour onboarding walkthrough                   | Clone repo, context loads automatically       |
-| **Context degradation** | Session quality silently drops                  | Monitor warns, auto-switch restarts fresh     |
+✅ real and tested · 🟡 partial, with the reason in the row · ❌ absent
+<!-- fleet:anatomy:end -->
 
----
+<!-- fleet:footer:start -->
+## How it improves itself
 
-## Skills
+It carries its own evals and a self-improvement contract, [`dsip.json`](dsip.json) (level L2). A scheduled loop runs the evals, tries a change in a sandbox and opens it for review. A change that lowers a score is not merged, and a person merges every change. Lessons it learns are kept as rules in its memory files.
 
-15 on-demand workflows. Each is a markdown file with trigger conditions and step-by-step instructions. Claude reads them when needed (~70 tokens of metadata at startup).
+## Part of a fleet
 
-### Meta (Self-Improvement)
+One of the agent-native, recursively self-improving open-source projects by [Naman Parikh](https://github.com/naman10parikh). Each one is an agent employee that owns one part of an agent's harness or of the product around it.
 
-| Skill                                               | What It Does                                             |
-| --------------------------------------------------- | -------------------------------------------------------- |
-| [`/self-improve`](skills/self-improve/SKILL.md)     | Analyze past sessions for patterns, auto-update harness  |
-| [`/deep-think`](skills/deep-think/SKILL.md)         | Socratic questioning, self-critique, adversarial debate  |
-| [`/skill-creator`](skills/skill-creator/SKILL.md)   | Auto-generate new skills from discovered patterns        |
-| [`/harness-review`](skills/harness-review/SKILL.md) | Audit scaffold for quality and token efficiency          |
-| [`/skill-routing`](skills/skill-routing/SKILL.md)   | Progressive disclosure architecture for large skill sets |
+Siblings: [agentdial](https://github.com/naman10parikh/agentdial) (identity) · [wikimem](https://github.com/naman10parikh/wikimem) (memory) · [skillsmith](https://github.com/naman10parikh/skillsmith) (skills) · [agent-booster](https://github.com/naman10parikh/agent-booster) (tools / CLIs) · [armory](https://github.com/naman10parikh/armory) (MCPs and the component registry) · [agentgrid](https://github.com/naman10parikh/agentgrid) (dispatch) · [agentswarm](https://github.com/naman10parikh/agentswarm) (dispatch) · [agentbench](https://github.com/naman10parikh/agentbench) (evals) · [agentmoney](https://github.com/naman10parikh/agentmoney) (observability).
 
-### Planning & Architecture
+## Contributing and security
 
-| Skill                                             | What It Does                                             |
-| ------------------------------------------------- | -------------------------------------------------------- |
-| [`/architect`](skills/architect/SKILL.md)         | Structured trade-off analysis for architecture decisions |
-| [`/sprint`](skills/sprint/SKILL.md)               | Break goals into 2-hour chunks with dependency mapping   |
-| [`/model-routing`](skills/model-routing/SKILL.md) | Auto-select the right model tier for each task           |
+Read [CONTRIBUTING.md](CONTRIBUTING.md); AI-assisted pull requests are welcome. Report a vulnerability privately, as [SECURITY.md](SECURITY.md) explains.
 
-### Operations
+## Star history
 
-| Skill                                                         | What It Does                                 |
-| ------------------------------------------------------------- | -------------------------------------------- |
-| [`/troubleshoot`](skills/troubleshoot/SKILL.md)               | 6-level error recovery ladder                |
-| [`/validate`](skills/validate/SKILL.md)                       | Check harness setup is internally consistent |
-| [`/recover`](skills/recover/SKILL.md)                         | Recovery protocol when things go wrong       |
-| [`/handoff`](skills/handoff/SKILL.md)                         | Write session continuity document            |
-| [`/memory-compression`](skills/memory-compression/SKILL.md)   | Memory management across compactions         |
-| [`/integrate-resources`](skills/integrate-resources/SKILL.md) | Process new resources and extract insights   |
-| [`/loop-integration`](skills/loop-integration/SKILL.md)       | Session-scoped cron jobs for monitoring      |
-
----
-
-## Hooks
-
-6 lifecycle scripts + 2 inline blockers. Configured in `.claude/settings.local.json`.
-
-| Hook                                                               | Event                  | What It Does                                                     |
-| ------------------------------------------------------------------ | ---------------------- | ---------------------------------------------------------------- |
-| [`session-start-context.sh`](hooks/session-start-context.sh)       | SessionStart           | Loads CLAUDE.md, memory, learnings, git status, skills inventory |
-| [`context-monitor.sh`](hooks/context-monitor.sh)                   | SessionStart           | Health checks: stale plans, memory bloat, uncommitted work       |
-| [`pre-compact-memory-flush.sh`](hooks/pre-compact-memory-flush.sh) | PreCompact             | Saves anchor state + backup before context compression           |
-| [`post-compact-restore.sh`](hooks/post-compact-restore.sh)         | SessionStart (compact) | Re-injects context after auto-compaction                         |
-| [`stop-verify.sh`](hooks/stop-verify.sh)                           | Stop                   | Quality gate: warns about uncommitted work                       |
-| [`session-end-log.sh`](hooks/session-end-log.sh)                   | SessionEnd             | Logs session summary to daily memory                             |
-
-**Inline hooks** (no script file, configured in settings.local.json):
-
-- **Destructive Command Blocker** `PreToolUse: Bash` — blocks `rm -rf /`, `sudo rm -rf`, `dd if=/dev`, etc.
-- **Protected File Blocker** `PreToolUse: Write|Edit` — prevents accidental edits to lockfiles and `.env`
-
----
-
-## Rules
-
-3 auto-loading rule files. Claude loads the relevant rule when you edit matching file types.
-
-| Rule                                       | Glob Pattern                     | What It Enforces                                          |
-| ------------------------------------------ | -------------------------------- | --------------------------------------------------------- |
-| [`typescript.md`](rules/typescript.md)     | `*.ts`, `*.tsx`                  | Strict TS, no `any`, Zod at boundaries, Result pattern    |
-| [`code-quality.md`](rules/code-quality.md) | `*.ts`, `*.tsx`, `*.js`, `*.jsx` | Functional components, Tailwind, accessibility, dark mode |
-| [`docs.md`](rules/docs.md)                 | `*.md`, `docs/**/*.md`           | Never remove content, concrete examples, evidence-backed  |
-
----
-
-## Memory System
-
-Three-tier architecture that survives compaction.
-
-```
-Tier 1: Bootstrap (always loaded)
-├── CLAUDE.md              Project config and operating instructions
-└── memory/MEMORY.md       Curated long-term decisions (cap: 500 lines)
-
-Tier 2: On-Demand (loaded when needed)
-├── .claude/skills/        Workflows loaded by trigger
-└── .claude/rules/         Context loaded by file pattern
-
-Tier 3: Recovery (loaded after compaction)
-├── .claude/anchor-state.md     What you were doing pre-compaction
-├── .claude/backups/            Full snapshots
-├── memory/daily/{date}.md      Session journals
-└── memory/LEARNINGS.md         Append-only error patterns
-```
-
-Each compaction retains only 20-30% of detail. After 2 compactions, you're working with 4-9% of the original. The memory system ensures critical state always survives.
-
-See [docs/MEMORY-SYSTEM.md](docs/MEMORY-SYSTEM.md) for the full architecture.
-
----
-
-## Auto-Switch
-
-`scripts/auto-switch.sh` wraps Claude Code in a session loop. When context degrades, it captures state and starts a fresh session with full context injection.
-
-```bash
-# Interactive mode (daytime)
-./scripts/auto-switch.sh
-
-# Autonomous overnight mode
-./scripts/auto-switch.sh --overnight
-
-# Background execution
-tmux new-session -d -s work './scripts/auto-switch.sh --overnight'
-```
-
-Handles: context degradation (immediate restart), rate limits (60-min wait), crashes (30s retry), normal exit (stop). Max 20 sessions per loop.
-
-See [docs/AUTO-SWITCH.md](docs/AUTO-SWITCH.md) for details.
-
----
-
-## Project Structure
-
-```
-claude-harness/
-├── skills/                 # 15 on-demand workflows
-│   ├── self-improve/           Analyze sessions, auto-update harness
-│   ├── deep-think/             Socratic questioning for hard decisions
-│   ├── architect/              Trade-off analysis, second-order effects
-│   ├── sprint/                 Break goals into 2-hour focused chunks
-│   ├── troubleshoot/           6-level error recovery chain
-│   ├── memory-compression/     Manage memory across compactions
-│   ├── skill-creator/          Auto-generate new skills from patterns
-│   ├── harness-review/         Audit scaffold for efficiency
-│   ├── model-routing/          Route tasks to right model tier
-│   ├── integrate-resources/    Process new docs into knowledge
-│   ├── skill-routing/          Progressive disclosure architecture
-│   ├── loop-integration/       Scheduled recurring tasks
-│   ├── validate/               Verify setup consistency
-│   ├── recover/                Rollback protocol when things break
-│   └── handoff/                Session continuity documents
-├── hooks/                  # 6 lifecycle scripts
-│   ├── session-start-context.sh
-│   ├── context-monitor.sh
-│   ├── pre-compact-memory-flush.sh
-│   ├── post-compact-restore.sh
-│   ├── stop-verify.sh
-│   └── session-end-log.sh
-├── rules/                  # 3 auto-loading rule files
-│   ├── typescript.md
-│   ├── code-quality.md
-│   └── docs.md
-├── templates/              # Drop-in config files
-│   ├── CLAUDE.md.template
-│   ├── settings.local.json
-│   └── memory/
-│       ├── MEMORY.md.template
-│       └── LEARNINGS.md.template
-├── scripts/
-│   ├── auto-switch.sh          Session loop with auto-restart
-│   └── verify.sh               Setup verification
-├── examples/               # Per-project-type configs
-│   ├── web-app/
-│   ├── cli-tool/
-│   └── agent-project/
-├── docs/
-│   ├── HOOKS.md
-│   ├── SKILLS.md
-│   ├── MEMORY-SYSTEM.md
-│   └── AUTO-SWITCH.md
-├── bin/
-│   └── init.sh                 Interactive installer
-├── CONTRIBUTING.md
-├── CODE_OF_CONDUCT.md
-├── SECURITY.md
-├── LICENSE                     MIT
-└── package.json
-```
-
----
-
-## Examples
-
-Three starter configs included:
-
-| Example                                     | Stack                                                | Best For                       |
-| ------------------------------------------- | ---------------------------------------------------- | ------------------------------ |
-| [`web-app/`](examples/web-app/)             | Next.js, React, Tailwind, shadcn/ui, Supabase, Clerk | Full-stack web applications    |
-| [`cli-tool/`](examples/cli-tool/)           | Node.js CLI, commander.js, Zod, zero-config          | Command-line tools and scripts |
-| [`agent-project/`](examples/agent-project/) | Claude Agent SDK, structured tool calling, SOUL.md   | AI agent development           |
-
-The installer asks your project type and copies the matching example as your `CLAUDE.md`.
-
----
-
-## Docs
-
-| Document                                  | What It Covers                                                     |
-| ----------------------------------------- | ------------------------------------------------------------------ |
-| [HOOKS.md](docs/HOOKS.md)                 | Hook system, lifecycle events, environment variables, custom hooks |
-| [SKILLS.md](docs/SKILLS.md)               | Skill catalog, how skills work, creating new skills                |
-| [MEMORY-SYSTEM.md](docs/MEMORY-SYSTEM.md) | Three-tier memory, compaction survival, file formats               |
-| [AUTO-SWITCH.md](docs/AUTO-SWITCH.md)     | Autonomous session management, exit detection, continuity          |
-
----
-
-## The Self-Improvement Part
-
-The `/self-improve` skill reads your past session logs and finds patterns:
-
-1. **Questions Claude asks repeatedly** — adds the answer to CLAUDE.md
-2. **Rules Claude forgets mid-session** — adds to `.claude/rules/`
-3. **Information Claude keeps re-discovering** — promotes to bootstrap memory
-4. **Backtracking patterns** — creates a skill that prevents them
-
-Each improvement is small. But they compound. After 10 sessions, your scaffold knows your project's quirks. After 50 sessions, new team members inherit all that institutional knowledge just by cloning the repo.
-
-**The harness improves itself.** That's the whole thesis.
-
----
-
-## Contributing
-
-See [CONTRIBUTING.md](CONTRIBUTING.md) for guidelines. We welcome:
-
-- **New skills** — reusable workflows
-- **New hooks** — lifecycle automation
-- **Bug fixes** — especially cross-platform (macOS + Linux)
-- **Better docs** — examples, explanations, tutorials
-- **Example configs** — project-type-specific setups
-
----
+[![Star history chart](https://api.star-history.com/svg?repos=naman10parikh/claude-harness&type=Date)](https://star-history.com/#naman10parikh/claude-harness&Date)
+<!-- fleet:footer:end -->
 
 ## License
 
-[MIT](LICENSE) — use it however you want.
-
----
-
-<p align="center">
-  <sub>Built from 100+ sessions of using Claude Code every day. Powered by <a href="https://github.com/naman10parikh">Energy</a>.</sub>
-</p>
+MIT © Naman Parikh. See [LICENSE](./LICENSE).
