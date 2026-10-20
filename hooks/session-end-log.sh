@@ -10,7 +10,7 @@ DAILY_FILE="$DAILY_DIR/$TODAY.md"
 
 mkdir -p "$DAILY_DIR"
 
-MODIFIED=$(git -C "$PROJECT_DIR" diff --name-only 2>/dev/null | wc -l | tr -d ' ')
+MODIFIED=$({ git -C "$PROJECT_DIR" diff --name-only 2>/dev/null || true; } | wc -l | tr -d ' ')
 
 if [ ! -f "$DAILY_FILE" ]; then
   echo "# Session Log — $TODAY" > "$DAILY_FILE"

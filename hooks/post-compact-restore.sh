@@ -58,7 +58,7 @@ if [ -f "$HANDOFF_FILE" ]; then
 fi
 
 # 6. Uncommitted files
-MODIFIED=$(git -C "$PROJECT_DIR" diff --name-only 2>/dev/null | head -15)
+MODIFIED=$({ git -C "$PROJECT_DIR" diff --name-only 2>/dev/null || true; } | head -15)
 if [ -n "$MODIFIED" ]; then
   echo "=== UNCOMMITTED FILES ==="
   echo "$MODIFIED"

@@ -10,7 +10,8 @@ import {
   mkdirSync,
   statSync,
 } from "fs";
-import { join } from "path";
+import { join, dirname } from "path";
+import { spawnSync } from "child_process";
 import { tmpdir } from "os";
 
 let tmpDir;
@@ -361,6 +362,26 @@ describe("hook scripts", () => {
         // Check user execute bit
         expect(mode & 0o100).toBeTruthy();
       }
+    }
+  });
+
+  it("exit 0 in a folder that is not a git repository", () => {
+    install({
+      projectDir: tmpDir,
+      projectName: "test",
+      language: "typescript",
+      tier: "expert",
+      projectType: "web-app",
+      quiet: true,
+    });
+
+    for (const file of ["context-monitor.sh", "post-compact-restore.sh", "session-end-log.sh"]) {
+      const result = spawnSync("bash", [join(tmpDir, ".claude/hooks", file)], {
+        cwd: tmpDir,
+        input: "{}",
+        env: { ...process.env, CLAUDE_PROJECT_DIR: tmpDir, GIT_CEILING_DIRECTORIES: dirname(tmpDir) },
+      });
+      expect(result.status, file).toBe(0);
     }
   });
 });

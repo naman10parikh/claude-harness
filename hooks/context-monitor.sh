@@ -22,7 +22,7 @@ if [ -f "$PLAN_FILE" ]; then
 fi
 
 # 2. Check uncommitted file count
-UNCOMMITTED_COUNT=$(git -C "$PROJECT_DIR" diff --name-only 2>/dev/null | wc -l | tr -d ' ')
+UNCOMMITTED_COUNT=$({ git -C "$PROJECT_DIR" diff --name-only 2>/dev/null || true; } | wc -l | tr -d ' ')
 if [ "$UNCOMMITTED_COUNT" -gt 50 ]; then
   WARNINGS="$WARNINGS\n[HEALTH] $UNCOMMITTED_COUNT uncommitted files. Consider committing stable work."
 fi

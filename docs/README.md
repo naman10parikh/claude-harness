@@ -53,7 +53,7 @@ Then run `pnpm test` and `pnpm run eval`. Install the changed tier into a scratc
 
 **How do I run its tests and evals?** Run `pnpm install`. There is no build step. `pnpm test` runs the installer's Vitest tests in [test/install.test.js](../test/install.test.js). `pnpm run eval` runs [eval/run-eval.mjs](../eval/run-eval.mjs): invariants of the payload, live starter, pro and expert installs into scratch folders, then the command line, MCP server, hooks and blockers.
 
-**What does it not do?** It does not run the model or judge your code. It never deletes your files. The settings point at each hook by its absolute path, so they do not follow the project to a new folder. In a folder that is not a git repository, three hooks, `context-monitor.sh`, `post-compact-restore.sh` and `session-end-log.sh`, exit with an error without blocking the session. `npx claude-harness` runs an older npm release, so use the GitHub form in the main README.
+**What does it not do?** It does not run the model or judge your code. It never deletes your files. The settings point at each hook by its absolute path, so they do not follow the project to a new folder. `npx claude-harness` runs an older npm release, so use the GitHub form in the main README.
 
 ## More
 
