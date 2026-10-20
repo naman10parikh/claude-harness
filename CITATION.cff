@@ -1,0 +1,12 @@
+cff-version: 1.2.0
+message: If you use this software, please cite it as below.
+title: "Claude Harness: One command installs a tested Claude Code harness: skills, hooks, rules, sub-agents and memory."
+type: software
+authors:
+  - family-names: Parikh
+    given-names: Naman
+repository-code: "https://github.com/naman10parikh/claude-harness"
+license: MIT
+version: "1.0.0"
+abstract: "One command installs a tested Claude Code harness: skills, hooks, rules, sub-agents and memory."
+keywords: ["agent-native", "claude-code-harness", "project-scaffold", "context-management"]
