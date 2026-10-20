@@ -226,14 +226,17 @@ PROJECT_DIR="${CLAUDE_PROJECT_DIR:-$(pwd)}"
 exit 0
 ```
 
-### Available Environment Variables
+### What a Hook Receives
+
+Claude Code passes the event to a command hook as JSON on stdin, for example
+`{"hook_event_name":"PreToolUse","tool_name":"Bash","tool_input":{"command":"ls"}}`. Read a field with
+`jq -r '.tool_input.command'`, or match the whole event with `grep`. There is no `CLAUDE_TOOL_INPUT`
+environment variable: a hook that reads one sees an empty string.
 
 | Variable | Available In | Contents |
 |----------|-------------|----------|
 | `CLAUDE_PROJECT_DIR` | All hooks | Project root directory |
-| `CLAUDE_TOOL_NAME` | PreToolUse, PostToolUse | Tool being called (Bash, Write, etc.) |
-| `CLAUDE_TOOL_INPUT` | PreToolUse, PostToolUse | Tool input (command text, file content) |
-| `CLAUDE_TOOL_INPUT_FILE_PATH` | PreToolUse, PostToolUse | File path for Write/Edit/Read tools |
+| `CLAUDE_PLUGIN_ROOT` | Plugin hooks | The plugin's own folder |
 | `CLAUDE_TERMINAL_CONTEXT` | All hooks | Terminal context identifier |
 | `TMUX_PANE` | All hooks (if in tmux) | Current tmux pane ID |
 

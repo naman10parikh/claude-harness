@@ -26,7 +26,8 @@ fi
 
 echo ""
 echo "=== MAINTAINER PROMPTS SUMMARY ==="
-PROMPT_COUNT=$(find "$PROJECT_DIR/resources/maintainer-prompts" -name "*.md" -type f 2>/dev/null | wc -l | tr -d ' ')
+# `|| true`: the folder may not exist, and under pipefail a failed find would end the hook.
+PROMPT_COUNT=$({ find "$PROJECT_DIR/resources/maintainer-prompts" -name "*.md" -type f 2>/dev/null || true; } | wc -l | tr -d ' ')
 echo "Total maintainer prompts: $PROMPT_COUNT"
 # List all prompts with first line (title) for quick reference
 for f in $(find "$PROJECT_DIR/resources/maintainer-prompts" -name "*.md" -type f 2>/dev/null | sort); do
@@ -66,7 +67,7 @@ echo "=== RECENT COMMITS ==="
 git -C "$PROJECT_DIR" log --oneline -10 2>/dev/null || echo "(no git history)"
 
 # Auto-detect unread resources
-UNREAD_COUNT=$(find "$PROJECT_DIR/resources/unread" -name "*.md" -type f 2>/dev/null | wc -l | tr -d ' ')
+UNREAD_COUNT=$({ find "$PROJECT_DIR/resources/unread" -name "*.md" -type f 2>/dev/null || true; } | wc -l | tr -d ' ')
 if [ "$UNREAD_COUNT" -gt 0 ]; then
   echo ""
   echo "=== ACTION REQUIRED: $UNREAD_COUNT UNREAD RESOURCES ==="
@@ -77,15 +78,15 @@ if [ "$UNREAD_COUNT" -gt 0 ]; then
 fi
 
 # Check git status for uncommitted work
-MODIFIED=$(git -C "$PROJECT_DIR" diff --name-only 2>/dev/null | wc -l | tr -d ' ')
-UNTRACKED=$(git -C "$PROJECT_DIR" ls-files --others --exclude-standard 2>/dev/null | wc -l | tr -d ' ')
+MODIFIED=$({ git -C "$PROJECT_DIR" diff --name-only 2>/dev/null || true; } | wc -l | tr -d ' ')
+UNTRACKED=$({ git -C "$PROJECT_DIR" ls-files --others --exclude-standard 2>/dev/null || true; } | wc -l | tr -d ' ')
 if [ "$MODIFIED" -gt 0 ] || [ "$UNTRACKED" -gt 0 ]; then
   echo ""
   echo "=== GIT STATUS: $MODIFIED modified, $UNTRACKED untracked ==="
 fi
 
 # Report last research date
-LAST_DAILY=$(ls -1 "$PROJECT_DIR/memory/daily/" 2>/dev/null | sort -r | head -1)
+LAST_DAILY=$({ ls -1 "$PROJECT_DIR/memory/daily/" 2>/dev/null || true; } | sort -r | head -1)
 if [ -n "$LAST_DAILY" ] && [ "$LAST_DAILY" != "$TODAY.md" ]; then
   echo ""
   echo "=== STALENESS: Last active session was ${LAST_DAILY%.md}. Consider running /research for updates. ==="
@@ -94,10 +95,10 @@ fi
 # Skills & tools inventory (quick count)
 echo ""
 echo "=== INVENTORY ==="
-SKILL_COUNT=$(find "$PROJECT_DIR/.claude/skills" -name "SKILL.md" -type f 2>/dev/null | wc -l | tr -d ' ')
-RULE_COUNT=$(find "$PROJECT_DIR/.claude/rules" -name "*.md" -type f 2>/dev/null | wc -l | tr -d ' ')
-AGENT_COUNT=$(find "$PROJECT_DIR/.claude/agents" -name "*.md" -type f 2>/dev/null | wc -l | tr -d ' ')
-RESOURCE_COUNT=$(find "$PROJECT_DIR/resources/read" -name "*.md" -type f 2>/dev/null | wc -l | tr -d ' ')
+SKILL_COUNT=$({ find "$PROJECT_DIR/.claude/skills" -name "SKILL.md" -type f 2>/dev/null || true; } | wc -l | tr -d ' ')
+RULE_COUNT=$({ find "$PROJECT_DIR/.claude/rules" -name "*.md" -type f 2>/dev/null || true; } | wc -l | tr -d ' ')
+AGENT_COUNT=$({ find "$PROJECT_DIR/.claude/agents" -name "*.md" -type f 2>/dev/null || true; } | wc -l | tr -d ' ')
+RESOURCE_COUNT=$({ find "$PROJECT_DIR/resources/read" -name "*.md" -type f 2>/dev/null || true; } | wc -l | tr -d ' ')
 echo "Skills: $SKILL_COUNT | Rules: $RULE_COUNT | Sub-agents: $AGENT_COUNT | Resources: $RESOURCE_COUNT | Maintainer prompts: $PROMPT_COUNT"
 
 # MCP config summary
@@ -181,7 +182,7 @@ echo ""
 echo "=== MEMORY HEALTH ==="
 # Check memory archive directory
 if [ -d "$PROJECT_DIR/memory/archive" ]; then
-  ARCHIVE_COUNT=$(find "$PROJECT_DIR/memory/archive" -name "*.md" -type f 2>/dev/null | wc -l | tr -d ' ')
+  ARCHIVE_COUNT=$({ find "$PROJECT_DIR/memory/archive" -name "*.md" -type f 2>/dev/null || true; } | wc -l | tr -d ' ')
   echo "Archive: $ARCHIVE_COUNT compressed files"
 else
   echo ">>> WARNING: memory/archive/ does not exist. Run: mkdir -p memory/archive/"
@@ -195,7 +196,7 @@ if [ -f "$PROJECT_DIR/.mcp.json" ]; then
   fi
 fi
 # Check topic files health
-TOPIC_COUNT=$(find "$PROJECT_DIR/memory/topics" -name "*.md" -type f 2>/dev/null | wc -l | tr -d ' ')
+TOPIC_COUNT=$({ find "$PROJECT_DIR/memory/topics" -name "*.md" -type f 2>/dev/null || true; } | wc -l | tr -d ' ')
 echo "Topic files: $TOPIC_COUNT | Use /memory search before starting work."
 
 echo ""

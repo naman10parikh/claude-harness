@@ -177,7 +177,7 @@ function generateSettingsJson(projectDir, tier) {
               {
                 type: "command",
                 command:
-                  "if echo \"$CLAUDE_TOOL_INPUT\" | grep -qE '(rm -rf /|rm -rf ~/|sudo rm -rf|> /dev/sda|mkfs|dd if=/dev)'; then echo 'BLOCKED: Destructive system command detected.' >&2; exit 2; fi",
+                  "if grep -qE '(rm -rf /|rm -rf ~/|sudo rm -rf|> /dev/sda|mkfs|dd if=/dev)'; then echo 'BLOCKED: Destructive system command detected.' >&2; exit 2; fi",
               },
             ],
           },

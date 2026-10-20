@@ -54,8 +54,9 @@ if [ -d "$PROJECT_DIR/resources/unread" ]; then
 fi
 
 # Git status
-MODIFIED=$(git -C "$PROJECT_DIR" diff --name-only 2>/dev/null | wc -l | tr -d ' ')
-UNTRACKED=$(git -C "$PROJECT_DIR" ls-files --others --exclude-standard 2>/dev/null | wc -l | tr -d ' ')
+# `|| true` keeps pipefail from ending the hook in a folder that is not a git repository.
+MODIFIED=$({ git -C "$PROJECT_DIR" diff --name-only 2>/dev/null || true; } | wc -l | tr -d ' ')
+UNTRACKED=$({ git -C "$PROJECT_DIR" ls-files --others --exclude-standard 2>/dev/null || true; } | wc -l | tr -d ' ')
 if [ "$MODIFIED" -gt 0 ] || [ "$UNTRACKED" -gt 0 ]; then
   echo ""
   echo "=== GIT STATUS: $MODIFIED modified, $UNTRACKED untracked ==="
@@ -64,8 +65,8 @@ fi
 # Skills & tools inventory
 echo ""
 echo "=== INVENTORY ==="
-SKILL_COUNT=$(find "$CLAUDE_DIR/skills" -name "SKILL.md" -type f 2>/dev/null | wc -l | tr -d ' ')
-RULE_COUNT=$(find "$CLAUDE_DIR/rules" -name "*.md" -type f 2>/dev/null | wc -l | tr -d ' ')
+SKILL_COUNT=$({ find "$CLAUDE_DIR/skills" -name "SKILL.md" -type f 2>/dev/null || true; } | wc -l | tr -d ' ')
+RULE_COUNT=$({ find "$CLAUDE_DIR/rules" -name "*.md" -type f 2>/dev/null || true; } | wc -l | tr -d ' ')
 echo "Skills: $SKILL_COUNT | Rules: $RULE_COUNT"
 
 # Load anchor state if recent (post-compaction recovery)

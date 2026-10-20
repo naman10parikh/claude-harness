@@ -33,7 +33,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "if echo \"$CLAUDE_TOOL_INPUT\" | grep -qE '(rm -rf /|rm -rf ~/|sudo rm -rf|> /dev/sda|mkfs|dd if=/dev)'; then echo 'BLOCKED: Destructive system command detected.' >&2; exit 2; fi"
+            "command": "if grep -qE '(rm -rf /|rm -rf ~/|sudo rm -rf|> /dev/sda|mkfs|dd if=/dev)'; then echo 'BLOCKED: Destructive system command detected.' >&2; exit 2; fi"
           }
         ]
       },
@@ -42,7 +42,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "if echo \"$CLAUDE_TOOL_INPUT_FILE_PATH\" | grep -qE '(pnpm-lock\\.yaml|package-lock\\.json|\\.env$|\\.env\\.local$)'; then echo 'BLOCKED: Protected file.' >&2; exit 2; fi"
+            "command": "if grep -qE '\"file_path\": *\"[^\"]*(pnpm-lock\\.yaml|package-lock\\.json|\\.env|\\.env\\.local)\"'; then echo 'BLOCKED: Protected file.' >&2; exit 2; fi"
           }
         ]
       }
