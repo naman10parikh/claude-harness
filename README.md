@@ -20,7 +20,7 @@ Claude Harness is an agent employee, a packaged specialist agent with its own sk
 
 _Claude Harness is part of an agent-native play for agent-native systems that can eventually be recursively self-improving and evolving, operated by agent employees._
 
-<p align="center"><img alt="Claude Harness on the command line" src="assets/terminal.svg" width="880"></p>
+<p align="center"><img alt="Claude Harness: a real task, run offline" src="assets/demo.svg" width="880"></p>
 <!-- fleet:header:end -->
 
 claude-harness copies a tested Claude Code setup into any project: skills, lifecycle hooks, rules,
@@ -230,7 +230,7 @@ Every project in this fleet is graded on the same 11 harness components and on s
 | Sub-agents | ✅ | .claude/agents/harness-auditor.md:1; .claude/agents/payload-reviewer.md:1 |
 | MCPs | ✅ | mcp-server.mjs:118 (3 tools); .mcp.json:3 |
 | Dispatch | ✅ | scripts/improve.mjs:1 (review, extract, propose, try); .github/workflows/improve.yml:10-12 (daily); .github/workflows/test.yml:16 (weekly) |
-| Evals | ✅ | eval/run-eval.mjs:292 (L1, L2, L3: 22 golden tasks); test/install.test.js (19); .github/workflows/test.yml:38-41 |
+| Evals | ✅ | eval/run-eval.mjs:318 (L1, L2, L3: 23 golden tasks, every tier's hook paths among them); test/install.test.js (19); .github/workflows/test.yml:38-41 |
 | Observability | ✅ | lib/run-log.mjs:30 (logs/runs.jsonl); bin/install.js:397 (every install); lib/sandbox-run.mjs:138 |
 | Sandbox/Infra | ✅ | lib/sandbox-run.mjs:107 (E2B Sandbox.create) |
 | Self-improvement | ✅ | dsip.json:5 (L2); scripts/improve.mjs:1 |
